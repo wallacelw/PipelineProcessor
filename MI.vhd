@@ -6,15 +6,14 @@ use std.textio.all;
 
 entity MEM_INSTR is
     port (
-        clock : in std_logic;
-        address : in std_logic_vector(7 downto 0);
-        dataout : out std_logic_vector(31 downto 0)
+        MI_address_in_PCReg : in std_logic_vector(7 downto 0);
+        MI_Instr_out : out std_logic_vector(31 downto 0)
     );
 end entity MEM_INSTR;
 
 architecture df of MEM_INSTR is
     
-    Type rom_type is array (0 to (2**address'length)-1) of std_logic_vector(dataout'range);
+    Type rom_type is array (0 to (2**MI_address_in_PCReg'length)-1) of std_logic_vector(MI_Instr_out'range);
     
     impure function init_rom_hex return rom_type is
 
@@ -23,7 +22,7 @@ architecture df of MEM_INSTR is
         variable rom_content : rom_type;
 
     begin
-        for i in 0 to (2**address'length)-1 loop
+        for i in 0 to (2**MI_address_in_PCReg'length)-1 loop
             readline(text_file, text_line);
             hread(text_line, rom_content(i));
         end loop;
@@ -35,6 +34,6 @@ architecture df of MEM_INSTR is
     
 begin
 
-    dataout <= mem(to_integer(unsigned(address)));
+    MI_Instr_out <= mem(to_integer(unsigned(MI_address_in_PCReg)));
 
 end df;

@@ -6,10 +6,10 @@ use IEEE.numeric_std.all;
 entity XREGS is
     
     port (
-        clk, wren, rst : in std_logic;
-        rs1, rs2, rd : in std_logic_vector(4 downto 0);
-        data : in std_logic_vector(31 downto 0);
-        ro1, ro2 : out std_logic_vector(31 downto 0)
+        XRegs_clk, XRegs_wren, XRegs_rst : in std_logic;
+        XRegs_rs1, Xregs_rs2, XRegs_rd : in std_logic_vector(4 downto 0);
+        XRegs_data : in std_logic_vector(31 downto 0);
+        XRegs_ro1, XRegs_ro2 : out std_logic_vector(31 downto 0)
 	);
     
 end XREGS;
@@ -22,25 +22,25 @@ architecture df of XREGS is
 begin
 
 	--Leitura
-    ro1 <= (others => '0') when (rs1 = "00000") 
-    		else breg(to_integer(unsigned(rs1)));
+    XRegs_ro1 <= (others => '0') when (XRegs_rs1 = "00000") 
+    		else breg(to_integer(unsigned(XRegs_rs1)));
     
-    ro2 <= (others => '0') when (rs2 = "00000") 
-    		else breg(to_integer(unsigned(rs2)));
+    XRegs_ro2 <= (others => '0') when (Xregs_rs2 = "00000") 
+    		else breg(to_integer(unsigned(Xregs_rs2)));
     
-    process(clk) begin
+    process(XRegs_clk) begin
 
-        if (rising_edge(clk)) then
+        if (rising_edge(XRegs_clk)) then
 
             --Reset
-            if (rst = '1') then 
+            if (XRegs_rst = '1') then 
                 for i in 31 downto 0 loop
                     breg(i) <= x"00000000";
                 end loop;
             
             --Escrita  
-            elsif (wren = '1') then
-                breg(to_integer(unsigned(rd))) <= data;
+            elsif (XRegs_wren = '1') then
+                breg(to_integer(unsigned(XRegs_rd))) <= XRegs_data;
 
             end if;
 

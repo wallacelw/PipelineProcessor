@@ -7,10 +7,10 @@ use IEEE.numeric_std.all;
 
 entity MUX_PC is
 	port (
-  		selector : in std_logic;
-  		a : in std_logic_vector(31 downto 0);
-        b : in std_logic_vector(31 downto 0);
-        s : out std_logic_vector(31 downto 0)
+  		PCMux_PCSrcE: in std_logic;
+  		PCMux_Adder_in : in std_logic_vector(31 downto 0);
+        PCMux_PCTargetE_in : in std_logic_vector(31 downto 0);
+        PCMux_out : out std_logic_vector(31 downto 0)
  	);
 end entity MUX_PC;
 
@@ -18,7 +18,9 @@ architecture df of MUX_PC is
     
 begin
 
-    S <= a when selector = '0' else b;
+    PCMux_out <= PCMux_Adder_in 
+	when PCMux_PCSrcE = '0' 
+	else PCMux_PCTargetE_in;
 
 end df;
 
