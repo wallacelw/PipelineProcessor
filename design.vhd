@@ -364,8 +364,7 @@ begin
 
 	-- IF
 
-	--- PCMUX
-	PCMUX port map (
+	MUX_PC port map (
 		PCMux_Src => PC_Control_PCSRC_bus,
 		PCMux_Adder_in => PCAdder_out_bus,
 		PCMux_PC_Imm_in => EX_MEM_Pc_plus_Imm_out_bus,
@@ -373,4 +372,37 @@ begin
 		PCMux_out => PCMux_out_bus
 	);
 
+	PC port map (
+		PCReg_clk => clock,
+		PCReg_in => PCMux_out_bus,
+		PCReg_out => PCReg_out_bus,
+		PCReg_address_out => PCReg_address_out_bus
+	);
+
+	ADDER_4 port map (
+		PCAdder_in => PCReg_out_bus,
+		PCAdder_out => PCAdder_out_bus
+	);
+
+	MEM_INSTR port map (
+		MI_address => PCReg_out_bus,
+		MI_Instr_out => MI_Instr_out_bus
+	);
+
+	IF_ID port map (
+		IF_ID_clk => clock,
+		IF_ID_PC_in => PCReg_out_bus,
+		IF_ID_PC_out => IF_ID_PC_out_bus,
+		IF_ID_Instr_in => MI_Instr_out_bus,
+		IF_ID_Instr_out => IF_ID_Instr_out_bus,
+		IF_ID_rs1_out => IF_ID_rs1_out_bus,
+		IF_ID_rs2_out => IF_ID_rs2_out_bus,
+		IF_ID_rd_out => IF_ID_rd_out_bus,
+		IF_ID_PC_PLUS_4_in => PCAdder_out_bus,
+		IF_ID_PC_PLUS_4_out => IF_ID_PC_PLUS_4_out_bus
+	);
+
+	-- ID
+
+	CONTROL 
 end structural;
