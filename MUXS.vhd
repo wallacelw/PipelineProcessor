@@ -56,10 +56,14 @@ use IEEE.numeric_std.all;
 
 entity MUX_XREG is
 	port (
-  		XREGSMUX_ResultSrc : in std_logic_vector(1 downto 0);
+  		XREGSMUX_ResultSrc : in std_logic_vector(2 downto 0);
+
   		XREGSMUX_ALU_in : in std_logic_vector(31 downto 0);
         XREGSMUX_mem_data_in : in std_logic_vector(31 downto 0);
 		XREGSMUX_pc_plus_4_in : in std_logic_vector(31 downto 0);
+		XREGSMUX_pc_plus_Imm_in : in std_logic_vector(31 downto 0);
+		XREGSMUX_Imm_in : in std_logic_vector(31 downto 0);
+
         XREGSMUX_out : out std_logic_vector(31 downto 0)
  	);
 end entity MUX_XREG;
@@ -68,8 +72,10 @@ architecture df of MUX_XREG is
     
 begin
 
-    XREGSMUX_out <= XREGSMUX_ALU_in when selector = "00"  else 
-		XREGSMUX_mem_data_in when selector = "01" else
-		XREGSMUX_pc_plus_4_in;
+    XREGSMUX_out <= XREGSMUX_ALU_in when XREGSMUX_ResultSrc = "000" else 
+		XREGSMUX_mem_data_in when XREGSMUX_ResultSrc = "001" else
+		XREGSMUX_pc_plus_4_in when XREGSMUX_ResultSrc = "010" else
+		XREGSMUX_pc_plus_Imm_in when XREGSMUX_ResultSrc = "011" else
+		XREGSMUX_Imm_in;
 
 end df;

@@ -134,8 +134,8 @@ entity EX_MEM is
 	port (
   		EX_MEM_clk : in std_logic;
 
-  		EX_MEM_pc_in : in std_logic_vector(31 downto 0);
-        EX_MEM_pc_out : out std_logic_vector(31 downto 0);
+  		EX_MEM_PC_plus_Imm_in : in std_logic_vector(31 downto 0);
+        EX_MEM_Pc_plus_Imm_out : out std_logic_vector(31 downto 0);
 
         EX_MEM_zero_in : in std_logic;
         EX_MEM_zero_out : out std_logic;
@@ -148,6 +148,9 @@ entity EX_MEM is
 
         EX_MEM_Alu_in : in std_logic_vector(31 downto 0);
         EX_MEM_Alu_out : out std_logic_vector(31 downto 0);
+
+        EX_MEM_imm_in : in std_logic_vector(31 downto 0);
+        EX_MEM_imm_out : out std_logic_vector(31 downto 0);
 
         EX_MEM_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
         EX_MEM_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
@@ -175,7 +178,7 @@ begin
 
     process(EX_MEM_clk) begin
         if (rising_edge(EX_MEM_clk)) then
-            EX_MEM_pc_out <= EX_MEM_pc_in;
+            EX_MEM_Pc_plus_Imm_out <= EX_MEM_PC_plus_Imm_in;
 
             EX_MEM_zero_out <= EX_MEM_zero_in;
 
@@ -184,6 +187,8 @@ begin
             EX_MEM_rd_out <= EX_MEM_rd_in;
 
             EX_MEM_Alu_out <= EX_MEM_Alu_in;
+
+            EX_MEM_imm_out <= EX_MEM_imm_in;
 
             EX_MEM_PC_PLUS_4_out <= EX_MEM_PC_PLUS_4_in;
 
@@ -217,6 +222,12 @@ entity MEM_WB is
         MEM_WB_rd_in : in std_logic_vector(4 downto 0);
         MEM_WB_rd_out : out std_logic_vector(4 downto 0);
 
+        MEM_WB_PC_plus_Imm_in : in std_logic_vector(31 downto 0);
+        MEM_WB_Pc_plus_Imm_out : out std_logic_vector(31 downto 0);
+
+        MEM_WB_imm_in : in std_logic_vector(31 downto 0);
+        MEM_WB_imm_out : out std_logic_vector(31 downto 0);
+
         MEM_WB_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
         MEM_WB_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
 
@@ -240,6 +251,10 @@ begin
             MEM_WB_Alu_out <= MEM_WB_Alu_in;
 
             MEM_WB_rd_out <= MEM_WB_rd_in;
+
+            MEM_WB_PC_plus_Imm_out <= MEM_WB_PC_plus_Imm_in;
+            
+            MEM_WB_imm_out <= MEM_WB_imm_in;
 
             MEM_WB_PC_PLUS_4_out <= MEM_WB_PC_PLUS_4_in;
 
