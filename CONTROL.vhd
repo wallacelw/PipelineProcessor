@@ -4,7 +4,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity CONTROL is
+entity CONTROL_MODULE is
 	port (
         CONTROL_instr : in std_logic_vector(31 downto 0);
 
@@ -23,7 +23,7 @@ entity CONTROL is
  	);
 end entity;
 
-architecture df of CONTROL is
+architecture df of CONTROL_MODULE is
 
     signal opcode : std_logic_vector(7 downto 0);
     signal funct3 : std_logic_vector(3 downto 0);

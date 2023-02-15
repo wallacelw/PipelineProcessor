@@ -5,7 +5,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity IF_ID is
+entity IF_ID_PIPE is
 	port (
   		IF_ID_clk : in std_logic;
 
@@ -24,7 +24,7 @@ entity IF_ID is
  	);
 end entity;
 
-architecture df of IF_ID is
+architecture df of IF_ID_PIPE is
 
 begin
 
@@ -49,9 +49,9 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity ID_EX is
+entity ID_EX_PIPE is
 	port (
-  		IF_EX_clk : in std_logic;
+  		ID_EX_clk : in std_logic;
 
   		ID_EX_PC_in : in std_logic_vector(31 downto 0);
         ID_EX_PC_out : out std_logic_vector(31 downto 0);
@@ -93,7 +93,7 @@ entity ID_EX is
  	);
 end entity;
 
-architecture df of ID_EX is
+architecture df of ID_EX_PIPE is
 
 begin
 
@@ -130,7 +130,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity EX_MEM is
+entity EX_MEM_PIPE is
 	port (
   		EX_MEM_clk : in std_logic;
 
@@ -172,7 +172,7 @@ entity EX_MEM is
  	);
 end entity;
 
-architecture df of EX_MEM is
+architecture df of EX_MEM_PIPE is
 
 begin
 
@@ -209,7 +209,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity MEM_WB is
+entity MEM_WB_PIPE is
 	port (
   		MEM_WB_clk : in std_logic;
 
@@ -240,7 +240,7 @@ entity MEM_WB is
  	);
 end entity;
 
-architecture df of MEM_WB is
+architecture df of MEM_WB_PIPE is
 
 begin
 

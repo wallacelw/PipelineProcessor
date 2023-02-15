@@ -55,7 +55,7 @@ component MEM_INSTR is
 end component;
 signal MI_Instr_out_bus : std_logic_vector(31 downto 0);
 
-component IF_ID is
+component IF_ID_PIPE is
 	port (
   		IF_ID_clk : in std_logic;
 
@@ -82,7 +82,7 @@ signal IF_ID_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
 
 	-- ID
 
-component CONTROL is
+component CONTROL_MODULE is
 	port (
         CONTROL_instr : in std_logic_vector(31 downto 0);
 
@@ -124,11 +124,11 @@ component GenImm is
         GEN_IMM_imm32 : out std_logic_vector(31 downto 0)
     );
 end component;
-signal GEN_IMM_imm32 : std_logic_vector(31 downto 0);
+signal GEN_IMM_imm32_bus : std_logic_vector(31 downto 0);
 
-component ID_EX is
+component ID_EX_PIPE is
 	port (
-  		IF_EX_clk : in std_logic;
+  		ID_EX_clk : in std_logic;
 
   		ID_EX_PC_in : in std_logic_vector(31 downto 0);
         ID_EX_PC_out : out std_logic_vector(31 downto 0);
@@ -225,7 +225,7 @@ component ALU_Control is
 end component;
 signal ALU_Control_out_bus : std_logic_vector(3 downto 0);
 
-component EX_MEM is
+component EX_MEM_PIPE is
 	port (
   		EX_MEM_clk : in std_logic;
 
@@ -304,7 +304,7 @@ component MEM_DADOS is
 end component;
 signal MD_dataout_bus : std_logic_vector(31 downto 0);
 
-component MEM_WB is
+component MEM_WB_PIPE is
 	port (
   		MEM_WB_clk : in std_logic;
 
@@ -364,7 +364,7 @@ begin
 
 	-- IF
 
-	MUX_PC port map (
+	PCMUX: MUX_PC port map (
 		PCMux_Src => PC_Control_PCSRC_bus,
 		PCMux_Adder_in => PCAdder_out_bus,
 		PCMux_PC_Imm_in => EX_MEM_Pc_plus_Imm_out_bus,
@@ -372,24 +372,24 @@ begin
 		PCMux_out => PCMux_out_bus
 	);
 
-	PC port map (
+	PCREG: PC port map (
 		PCReg_clk => clock,
 		PCReg_in => PCMux_out_bus,
 		PCReg_out => PCReg_out_bus,
 		PCReg_address_out => PCReg_address_out_bus
 	);
 
-	ADDER_4 port map (
+	PCADDER: ADDER_4 port map (
 		PCAdder_in => PCReg_out_bus,
 		PCAdder_out => PCAdder_out_bus
 	);
 
-	MEM_INSTR port map (
+	MI: MEM_INSTR port map (
 		MI_address => PCReg_out_bus,
 		MI_Instr_out => MI_Instr_out_bus
 	);
 
-	IF_ID port map (
+	IF_ID: IF_ID_PIPE port map (
 		IF_ID_clk => clock,
 		IF_ID_PC_in => PCReg_out_bus,
 		IF_ID_PC_out => IF_ID_PC_out_bus,
@@ -404,5 +404,36 @@ begin
 
 	-- ID
 
-	CONTROL 
+	CONTROL: CONTROL_MODULE port map (
+		CONTROL_instr => IF_ID_Instr_out_bus,
+		CONTROL_ALUSrc => CONTROL_ALUSrc_bus,
+		CONTROL_ALUOp => CONTROL_ALUOp_bus,
+		CONTROL_Branch => CONTROL_Branch_bus,
+		CONTROL_Jal => CONTROL_Jal_bus,
+		CONTROL_MemWrite => CONTROL_MemWrite_bus,
+		CONTROL_RegWrite => CONTROL_RegWrite_bus,
+		CONTROL_ResultSrc => CONTROL_ResultSrc_bus
+	);
+
+	BancoRegs: XREGS port map (
+		XRegs_clk => clock,
+		XRegs_wren => EX_MEM_CONTROL_RegWrite_out_bus,
+		-- XRegs_rst not used
+		XRegs_rs1 => IF_ID_rs1_out_bus,
+		Xregs_rs2 => IF_ID_rs2_out_bus,
+		XRegs_rd => IF_ID_rd_out_bus,
+		XRegs_data => XREGSMUX_out_bus,
+		XRegs_ro1 => XRegs_ro1_bus,
+		XRegs_ro2 => XRegs_ro2_bus
+	);
+
+	GEN_IMM: GenImm port map (
+		GEN_IMM_instr => IF_ID_Instr_out_bus,
+		GEN_IMM_imm32 => GEN_IMM_imm32_bus
+	);
+	
+	ID_EX: ID_EX port map (
+
+	);
+
 end structural;
