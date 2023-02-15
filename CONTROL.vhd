@@ -15,6 +15,7 @@ entity CONTROL is
         CONTROL_ALUOp : out std_logic_vector(1 downto 0);
         --MEM
         CONTROL_Branch : out std_logic;
+        CONTROL_Jal : out std_logic; -- indica se a instrução é do tipo Jal or Jalr
         CONTROL_MemRead : out std_logic;
         CONTROL_MemWrite : out std_logic;
         --WB
@@ -35,176 +36,105 @@ begin
     funct3 <= resize(unsigned('0' & instr(14 downto 12)), 4);
     funct7 <= resize(unsigned('0' & instr(31 downto 25)), 8);
 
+    process(Control_clk) begin 
+
     ---- Lógico-Aritméticas
-
-    -- ADD (R)
-    if (opcode = x"33" and funct3 = x"0" and funct7 = x"00") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
     
-    -- ADDi (I)
+    -- Type R : ADD, SUB, AND, SLT, OR, XOR, SLTU
+    if (opcode = x"33") then
+        CONTROL_ALUSrc <= "0"; -- Use Reg Value for ALU
+        CONTROL_ALUOp <= "10"; -- R type or I type
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "0"; -- Don't Read Mem
+        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_Mem2Reg <= "0"; -- Register receives ALU output
+    
+    -- Type I : ADDi, ANDi, ORi, XORi, SLLi, SRLi, SRAi, SLTi, SLTUi
     elsif (opcode = x"13" and func3 = x"0") then
-        ALUSrc <= '1';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-
-    -- SUB (R)
-    elsif (opcode = x"33" and funct3 = x"0" and funct7 = x"20") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-
-    -- AND (R)
-    elsif (opcode = x"33" and funct3 = x"7" and funct7 = x"00") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-        
-    -- ANDi
-    elsif (opcode = x"13" and func3 = x"7") then
-
-    -- LUI
-    elsif (opcode = x"37") then
-
-    -- SLT (R)
-    elsif (opcode = x"33" and funct3 = x"2" and funct7 = x"00") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-        
-    -- OR (R)
-    elsif (opcode = x"33" and funct3 = x"6" and funct7 = x"00") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-        
-    -- ORi
-    elsif (opcode = x"13" and func3 = x"6") then
-
-    -- XOR (R)
-    elsif (opcode = x"33" and funct3 = x"4" and funct7 = x"00") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-        
-    -- XORi
-    elsif (opcode = x"13" and func3 = x"4") then
-
-    -- SLLi
-    elsif (opcode = x"13" and funct3 = x"1" and funct7 = x"00") then
-
-    -- SRLi
-    elsif (opcode = x"13" and funct3 = x"5" and funct7 = x"00") then
-
-    -- SRAi
-    elsif (opcode = x"13" and funct3 = x"5" and funct7 = x"20") then
-
-    -- SLTi
-    elsif (opcode = x"13" and funct3 = x"2") then
-
-    -- SLTU (R)
-    elsif (opcode = x"33" and funct3 = x"3" and funct7 = x"00") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
-        
-    -- SLTUi
-    elsif (opcode = x"13" and funct3 = x"3") then
+        CONTROL_ALUSrc <= "1"; -- Use IMM Value for ALU
+        CONTROL_ALUOp <= "10"; -- R type or I type
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "0"; -- Don't Read Mem
+        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_Mem2Reg <= "0"; -- Register receives ALU output
 
     -- AUIPC
     elsif (opcode = x"17") then
-        ALUSrc <= '0';
-        ALUOp <= "10";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '0';
     
+    -- LUI
+    elsif (opcode = x"37") then
+
+
     ---- Subrotinas
 
     -- JAL (UJ) 
-    else if (opcode = x"6f") then
+    else if (opcode = x"6F") then
+        CONTROL_ALUSrc <= "-"; -- (Don't Care)
+        CONTROL_ALUOp <= "--"; -- (Don't Care)
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "0"; -- Don't Read Mem
+        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_Mem2Reg <= "0"; -- Register receives ALU output
 
     -- JALR (I)
     else if (opcode = x"67" and funct3 = x"0") then
+        CONTROL_ALUSrc <= "-"; -- Use IMM Value for ALU
+        CONTROL_ALUOp <= "--"; -- R type or I type
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "0"; -- Don't Read Mem
+        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_Mem2Reg <= "0"; -- Register receives ALU output
 
     ---- Saltos
+    -- Type SB (BRANCH):  BEQ, BNE, BLT, BGE, BLTU, BGEU
+    else if (opcode = x"63") then
+        CONTROL_ALUSrc <= "0"; -- Use Reg Value for ALU
+        CONTROL_ALUOp <= "01"; -- Branch Type
+        CONTROL_Branch <= "1"; -- update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "0"; -- Don't Read Mem
+        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
+        CONTROL_RegWrite <= "0"; -- Don't Write Back to Register
+        CONTROL_Mem2Reg <= "-"; -- (Don't Care)
 
-    -- BEQ (SB)
-    else if (opcode = x"63" and funct3 = x"0") then
-
-    -- BNE (SB)
-    else if (opcode = x"63" and funct3 = x"1") then
-
-    -- BLT (SB)
-    else if (opcode = x"63" and funct3 = x"4") then
-
-    -- BGE (SB)
-    else if (opcode = x"63" and funct3 = x"5") then
-
-    -- BGEU (SB)
-    else if (opcode = x"63" and funct3 = x"7") then
-
-    -- BLTU (SB)
-    else if (opcode = x"63" and funct3 = x"6") then
 
     ---- Memória
 
     -- LW (I)
     else if (opcode = x"03" and func3 = x"2") then
-        ALUSrc <= '1';
-        ALUOp <= "00";
-        Branch <= '0';
-        MemRead <= '1';
-        MemWrite <= '0';
-        RegWrite <= '1';
-        Mem2Reg <= '1';
+        CONTROL_ALUSrc <= "1"; -- Use Imm Value for ALU
+        CONTROL_ALUOp <= "00"; -- Memory Type
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "1"; -- Read Mem
+        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_Mem2Reg <= "1"; -- Register receives Mem output
+
     -- SW (S)
     else if (opcode = x"23" and func3 = x"2") then
-        ALUSrc <= '1';
-        ALUOp <= "00";
-        Branch <= '0';
-        MemRead <= '0';
-        MemWrite <= '1';
-        RegWrite <= '0';
-        Mem2Reg <= '-';
-    ---- NOP
+        CONTROL_ALUSrc <= "1"; -- Use Imm Value for ALU
+        CONTROL_ALUOp <= "00"; -- Memory Type
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_MemRead <= "0"; -- Don't Read Mem
+        CONTROL_MemWrite <= "1"; -- Write in Mem
+        CONTROL_RegWrite <= "0"; -- Write Back to Register
+        CONTROL_Mem2Reg <= "-"; -- (Don't Care)
+
+    ---- NOP (TODO)
     else
 
     end if;
+
+    end process;
 
 end df;
