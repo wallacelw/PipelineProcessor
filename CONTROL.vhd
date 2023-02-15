@@ -1,7 +1,5 @@
 --- Controle
 
--- NOT COMPLETE
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -33,110 +31,113 @@ architecture df of CONTROL is
 
 begin
 
-    opcode <= resize(unsigned('0' & instr(6 downto 0)), 8);
-    funct3 <= resize(unsigned('0' & instr(14 downto 12)), 4);
-    funct7 <= resize(unsigned('0' & instr(31 downto 25)), 8);
+    opcode <= '0' & CONTROL_instr(6 downto 0);
+    funct3 <= '0' & CONTROL_instr(14 downto 12);
+    funct7 <= '0' & CONTROL_instr(31 downto 25);
+
+    process(CONTROL_instr) begin
 
     ---- Lógico-Aritméticas
     
     -- Type R : ADD, SUB, AND, SLT, OR, XOR, SLTU
     if (opcode = x"33") then
-        CONTROL_ALUSrc <= "0"; -- Use Reg Value for ALU
+        CONTROL_ALUSrc <= '0'; -- Use Reg Value for ALU
         CONTROL_ALUOp <= "10"; -- R type or I type
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "000"; -- Register receives ALU output
     
     -- Type I : ADDi, ANDi, ORi, XORi, SLLi, SRLi, SRAi, SLTi, SLTUi
-    elsif (opcode = x"13" and func3 = x"0") then
-        CONTROL_ALUSrc <= "1"; -- Use IMM Value for ALU
+    elsif (opcode = x"13") and (funct3 = x"0") then
+        CONTROL_ALUSrc <= '1'; -- Use IMM Value for ALU
         CONTROL_ALUOp <= "10"; -- R type or I type
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "000"; -- Register receives ALU output
 
     -- TYPE U 
     elsif (opcode = x"17") then -- AUIPC
-        CONTROL_ALUSrc <= "-"; -- (Don't care)
+        CONTROL_ALUSrc <= '-'; -- (Don't care)
         CONTROL_ALUOp <= "--"; -- (Don't care)
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "011"; -- Register receives IMM + PC
     
     elsif (opcode = x"37") then -- LUI
-        CONTROL_ALUSrc <= "-"; -- (Don't care)
+        CONTROL_ALUSrc <= '-'; -- (Don't care)
         CONTROL_ALUOp <= "--"; -- (Don't care)
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "100"; -- Register receives IMM
 
     ---- Subrotinas
 
     -- JAL 
-    else if (opcode = x"6F") then
-        CONTROL_ALUSrc <= "-"; -- (Don't Care)
+    elsif (opcode = x"6F") then
+        CONTROL_ALUSrc <= '-'; -- (Don't Care)
         CONTROL_ALUOp <= "--"; -- (Don't Care)
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "01"; -- Update PC due to Jal
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "010"; -- Register RD receives PC+4
 
     -- JALR 
-    else if (opcode = x"67" and funct3 = x"0") then
-        CONTROL_ALUSrc <= "1"; -- Use IMM Value for ALU
+    elsif (opcode = x"67") and (funct3 = x"0") then
+        CONTROL_ALUSrc <= '1'; -- Use IMM Value for ALU
         CONTROL_ALUOp <= "10"; -- R type or I type
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "10"; -- Update PC due to Jalr
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "010"; -- Register RD receives PC+4
 
     ---- Saltos
     -- Type SB (BRANCH):  BEQ, BNE, BLT, BGE, BLTU, BGEU
-    else if (opcode = x"63") then
-        CONTROL_ALUSrc <= "0"; -- Use Reg Value for ALU
+    elsif (opcode = x"63") then
+        CONTROL_ALUSrc <= '0'; -- Use Reg Value for ALU
         CONTROL_ALUOp <= "01"; -- Branch Type
-        CONTROL_Branch <= "1"; -- update PC due to Branch
+        CONTROL_Branch <= '1'; -- update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "-"; -- (Don't care)
-        CONTROL_RegWrite <= "0"; -- Don't Write Back to Register
+        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_RegWrite <= '0'; -- Don't Write Back to Register
         CONTROL_ResultSrc <= "---"; -- (Don't Care)
 
 
     ---- Memória
 
     -- LW (I)
-    else if (opcode = x"03" and func3 = x"2") then
-        CONTROL_ALUSrc <= "1"; -- Use Imm Value for ALU
+    elsif (opcode = x"03") and (funct3 = x"2") then
+        CONTROL_ALUSrc <= '1'; -- Use Imm Value for ALU
         CONTROL_ALUOp <= "00"; -- Memory Type
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "0"; -- Read Mem
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_MemWrite <= '0'; -- Read Mem
+        CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "001"; -- Register receives Mem output
 
     -- SW (S)
-    else if (opcode = x"23" and func3 = x"2") then
-        CONTROL_ALUSrc <= "1"; -- Use Imm Value for ALU
+    elsif (opcode = x"23") and (funct3 = x"2") then
+        CONTROL_ALUSrc <= '1'; -- Use Imm Value for ALU
         CONTROL_ALUOp <= "00"; -- Memory Type
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= "1"; -- Write in Mem
-        CONTROL_RegWrite <= "0"; -- Write Back to Register
+        CONTROL_MemWrite <= '1'; -- Write in Mem
+        CONTROL_RegWrite <= '0'; -- Write Back to Register
         CONTROL_ResultSrc <= "---"; -- (Don't Care)
 
     ---- NOP (TODO)
-    else
-
-
+    --else
+    
     end if;
+
+    end process;
 end df;

@@ -8,7 +8,7 @@ entity ALU_Control is
 	port (
   		ALU_Control_instr : in std_logic_vector(31 downto 0);
         ALU_Control_alu_op : in std_logic_vector(1 downto 0);
-        ALU_Control_out : out std_logic_vector(31 downto 0)
+        ALU_Control_out : out std_logic_vector(3 downto 0)
  	);
 end entity;
 
@@ -19,8 +19,8 @@ architecture df of ALU_Control is
 
 begin
 
-    funct3 <= ('0' & unsigned(ALU_Control_instr(14 downto 12)));
-    funct7 <= ('0' & unsigned(ALU_Control_instr(31 downto 25)));
+    funct3 <= ('0' & (ALU_Control_instr(14 downto 12)));
+    funct7 <= ('0' & (ALU_Control_instr(31 downto 25)));
 
     process(ALU_Control_alu_op, ALU_Control_instr) begin
         -- for LW, SW
@@ -46,6 +46,8 @@ begin
 
             elsif (funct3 = x"7") then -- BGEU
                 ALU_Control_out <= "1011"; -- SGEU
+
+            end if;
 
         -- for R type and I type
         elsif (ALU_Control_alu_op = "10") then 
@@ -83,6 +85,7 @@ begin
                 ALU_Control_out <= "0000"; -- ADD
 
             end if;
+
         end if;
     end process;
 end df;
