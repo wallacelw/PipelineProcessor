@@ -297,4 +297,49 @@ architecture structural of CPU is
 
 begin
 
+	-- IF (out ports)
+
+	--- PCMUX
+	PCReg_in <= PCMux_out;
+
+	--- PCREG
+	PCAdder_in <= PCReg_out;
+	MI_address <= PCReg_address_out;
+	IF_ID_PC_in <= PCReg_out;
+
+	--- PCAdder
+	PCMux_Adder_in <= PCAdder_out;
+	IF_ID_PC_PLUS_4_in <= PCAdder_out;
+
+	--- MI
+	IF_ID_Instr_in <= MI_Instr_out;
+
+	-- ID (out ports)
+
+	-- IF/ID
+	XRegs_rs1 <= IF_ID_rs1_out;
+	XRegs_rs2 <= IF_ID_rs2_out;
+	ID_EX_rd_in <= IF_ID_rd_out;
+	CONTROL_instr <= IF_ID_Instr_out;
+	GEN_IMM_instr <= IF_ID_Instr_out;
+	ID_EX_instr_in <= IF_ID_Instr_out;
+	ID_EX_PC_PLUS_4_in <= IF_ID_PC_PLUS_4_out;
+	ID_EX_PC_in <= IF_ID_PC_out;
+
+	-- Control 
+	ID_EX_CONTROL_ALUSrc_in <= CONTROL_ALUSrc;
+	ID_EX_CONTROL_ALUOp_in <= CONTROL_ALUOp;
+	ID_EX_CONTROL_Branch_in <= CONTROL_Branch;
+	ID_EX_CONTROL_Jal_in <= CONTROL_Jal;
+	ID_EX_CONTROL_MemWrite_in <= CONTROL_MemWrite;
+	ID_EX_CONTROL_RegWrite_in <= CONTROL_RegWrite;
+	ID_EX_CONTROL_ResultSrc_in <= CONTROL_ResultSrc;
+
+	-- XREGS
+	ID_EX_rs1_in <= XRegs_rs1;
+	ID_EX_rs2_in <= XRegs_rs2;
+
+	-- IMM Gen
+	ID_EX_imm_in <= GEN_IMM_imm32;
+
 end structural;
