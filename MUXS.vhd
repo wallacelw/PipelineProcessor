@@ -29,34 +29,37 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity MUX_ULA is
+entity MUX_ALU is
 	port (
-  		selector : in std_logic;
-  		a : in std_logic_vector(31 downto 0);
-        b : in std_logic_vector(31 downto 0);
-        s : out std_logic_vector(31 downto 0)
+  		ALUMUX_ALUSrc : in std_logic;
+  		ALUMUX_rs2 : in std_logic_vector(31 downto 0);
+        ALUMUX_imm : in std_logic_vector(31 downto 0);
+        ALUMUX_out : out std_logic_vector(31 downto 0)
  	);
-end entity MUX_ULA;
+end entity MUX_ALU;
 
-architecture df of MUX_ULA is
+architecture df of MUX_ALU is
     
 begin
 
-    S <= a when selector = '0' else b;
+    ALUMUX_out <= ALUMUX_rs2 
+	when selector = '0' 
+	else ALUMUX_imm;
 
 end df;
 
----- Mux do XREG
+---- Mux do Result que vai para o DATA do Xregs
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity MUX_XREG is
 	port (
-  		selector : in std_logic;
-  		a : in std_logic_vector(31 downto 0);
-        b : in std_logic_vector(31 downto 0);
-        s : out std_logic_vector(31 downto 0)
+  		XREGSMUX_ResultSrc : in std_logic_vector(1 downto 0);
+  		XREGSMUX_ALU_in : in std_logic_vector(31 downto 0);
+        XREGSMUX_mem_data_in : in std_logic_vector(31 downto 0);
+		XREGSMUX_pc_plus_4_in : in std_logic_vector(31 downto 0);
+        XREGSMUX_out : out std_logic_vector(31 downto 0)
  	);
 end entity MUX_XREG;
 
@@ -64,6 +67,8 @@ architecture df of MUX_XREG is
     
 begin
 
-    S <= a when selector = '0' else b;
+    XREGSMUX_out <= XREGSMUX_ALU_in when selector = "00"  else 
+		XREGSMUX_mem_data_in when selector = "01" else
+		XREGSMUX_pc_plus_4_in;
 
 end df;
