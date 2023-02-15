@@ -16,7 +16,7 @@ entity CONTROL is
 
         --MEM
         CONTROL_Branch : out std_logic;
-        CONTROL_Jal : out std_logic; -- indica se a instrução é do tipo Jal or Jalr
+        CONTROL_Jal : out std_logic_vector(1 downto 0); -- indica se a instrução é do tipo Jal (== 01) or Jalr (== 10)
         CONTROL_MemWrite : out std_logic; -- memWrite = 1; memRead = 0
 
         --WB
@@ -44,7 +44,7 @@ begin
         CONTROL_ALUSrc <= "0"; -- Use Reg Value for ALU
         CONTROL_ALUOp <= "10"; -- R type or I type
         CONTROL_Branch <= "0"; -- Don't update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
         CONTROL_MemWrite <= "-"; -- (Don't care)
         CONTROL_RegWrite <= "1"; -- Write Back to Register
         CONTROL_ResultSrc <= "00"; -- Register receives ALU output
@@ -54,7 +54,7 @@ begin
         CONTROL_ALUSrc <= "1"; -- Use IMM Value for ALU
         CONTROL_ALUOp <= "10"; -- R type or I type
         CONTROL_Branch <= "0"; -- Don't update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
         CONTROL_MemWrite <= "-"; -- (Don't care)
         CONTROL_RegWrite <= "1"; -- Write Back to Register
         CONTROL_ResultSrc <= "00"; -- Register receives ALU output
@@ -68,11 +68,25 @@ begin
 
     ---- Subrotinas
 
-    -- JAL (UJ) 
+    -- JAL 
     else if (opcode = x"6F") then
+        CONTROL_ALUSrc <= "-"; -- (Don't Care)
+        CONTROL_ALUOp <= "--"; -- (Don't Care)
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "01"; -- Update PC due to Jal
+        CONTROL_MemWrite <= "-"; -- (Don't care)
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_ResultSrc <= "10"; -- Register RD receives PC+4
 
-    -- JALR (I)
+    -- JALR 
     else if (opcode = x"67" and funct3 = x"0") then
+        CONTROL_ALUSrc <= "1"; -- Use IMM Value for ALU
+        CONTROL_ALUOp <= "10"; -- R type or I type
+        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
+        CONTROL_Jal <= "10"; -- Update PC due to Jalr
+        CONTROL_MemWrite <= "-"; -- (Don't care)
+        CONTROL_RegWrite <= "1"; -- Write Back to Register
+        CONTROL_ResultSrc <= "10"; -- Register RD receives PC+4
 
     ---- Saltos
     -- Type SB (BRANCH):  BEQ, BNE, BLT, BGE, BLTU, BGEU
@@ -80,7 +94,7 @@ begin
         CONTROL_ALUSrc <= "0"; -- Use Reg Value for ALU
         CONTROL_ALUOp <= "01"; -- Branch Type
         CONTROL_Branch <= "1"; -- update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
         CONTROL_MemWrite <= "-"; -- (Don't care)
         CONTROL_RegWrite <= "0"; -- Don't Write Back to Register
         CONTROL_ResultSrc <= "--"; -- (Don't Care)
@@ -93,7 +107,7 @@ begin
         CONTROL_ALUSrc <= "1"; -- Use Imm Value for ALU
         CONTROL_ALUOp <= "00"; -- Memory Type
         CONTROL_Branch <= "0"; -- Don't update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
         CONTROL_MemWrite <= "0"; -- Read Mem
         CONTROL_RegWrite <= "1"; -- Write Back to Register
         CONTROL_ResultSrc <= "01"; -- Register receives Mem output
@@ -103,7 +117,7 @@ begin
         CONTROL_ALUSrc <= "1"; -- Use Imm Value for ALU
         CONTROL_ALUOp <= "00"; -- Memory Type
         CONTROL_Branch <= "0"; -- Don't update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
+        CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
         CONTROL_MemWrite <= "1"; -- Write in Mem
         CONTROL_RegWrite <= "0"; -- Write Back to Register
         CONTROL_ResultSrc <= "--"; -- (Don't Care)

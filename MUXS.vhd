@@ -7,9 +7,10 @@ use IEEE.numeric_std.all;
 
 entity MUX_PC is
 	port (
-  		PCMux_PCSrcE: in std_logic;
+  		PCMux_Src: in std_logic_vector(1 downto 0);
   		PCMux_Adder_in : in std_logic_vector(31 downto 0);
-        PCMux_PCTargetE_in : in std_logic_vector(31 downto 0);
+        PCMux_PC_Imm_in : in std_logic_vector(31 downto 0);
+		PCMux_Reg_Imm_in : in std_logic_vector(31 downto 0);
         PCMux_out : out std_logic_vector(31 downto 0)
  	);
 end entity MUX_PC;
@@ -18,9 +19,9 @@ architecture df of MUX_PC is
     
 begin
 
-    PCMux_out <= PCMux_Adder_in 
-	when PCMux_PCSrcE = '0' 
-	else PCMux_PCTargetE_in;
+    PCMux_out <= PCMux_Adder_in when PCMux_Src = "00" else
+		PCMux_PC_Imm_in when PCMux_Src = "01" else
+		PCMux_Reg_Imm_in; -- JALR;  src="10"
 
 end df;
 

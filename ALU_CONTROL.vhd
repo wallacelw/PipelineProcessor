@@ -80,6 +80,9 @@ begin
             elsif (funct3 = x"3"                   ) then
                 ALU_Control_out <= "1001"; -- SLTU
 
+            elsif (funct3 = x"0"                   ) then --JALR
+                ALU_Control_out <= "0000"; -- ADD
+
             end if;
         end if;
     end process;

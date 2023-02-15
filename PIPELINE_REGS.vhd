@@ -78,7 +78,7 @@ entity ID_EX is
         ID_EX_CONTROL_ALUSrc_in : in std_logic;
         ID_EX_CONTROL_ALUOp_in : in std_logic_vector(1 downto 0);
         ID_EX_CONTROL_Branch_in : in std_logic;
-        ID_EX_CONTROL_Jal_in : in std_logic;
+        ID_EX_CONTROL_Jal_in : in std_logic(1 downto 0);
         ID_EX_CONTROL_MemWrite_in : in std_logic;
         ID_EX_CONTROL_RegWrite_in : in std_logic;
         ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
@@ -156,7 +156,7 @@ entity EX_MEM is
 
         -- control
         EX_MEM_CONTROL_Branch_in : in std_logic;
-        EX_MEM_CONTROL_Jal_in : in std_logic;
+        EX_MEM_CONTROL_Jal_in : in std_logic(1 downto 0);
         EX_MEM_CONTROL_MemWrite_in : in std_logic;
         EX_MEM_CONTROL_RegWrite_in : in std_logic;
         EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
