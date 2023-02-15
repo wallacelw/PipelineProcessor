@@ -16,330 +16,361 @@ architecture structural of CPU is
     
 	-- IF
 
-    component MUX_PC is
-		port (
-			PCMux_Src: in std_logic_vector(1 downto 0);
-			PCMux_Adder_in : in std_logic_vector(31 downto 0);
-			PCMux_PC_Imm_in : in std_logic_vector(31 downto 0);
-			PCMux_Reg_Imm_in : in std_logic_vector(31 downto 0);
-			PCMux_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component MUX_PC is
+	port (
+  		PCMux_Src: in std_logic_vector(1 downto 0);
+  		PCMux_Adder_in : in std_logic_vector(31 downto 0);
+        PCMux_PC_Imm_in : in std_logic_vector(31 downto 0);
+		PCMux_Reg_Imm_in : in std_logic_vector(31 downto 0);
+        PCMux_out : out std_logic_vector(31 downto 0)
+ 	);
+end component;
+signal PCMux_out_bus : std_logic_vector(31 downto 0);
 
-	component PC is
-		port (
-			PCReg_clk : in std_logic;
-			PCReg_in : in std_logic_vector(31 downto 0);
-			PCReg_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component PC is
+	port (
+  		PCReg_clk : in std_logic;
+  		PCReg_in : in std_logic_vector(31 downto 0);
+        PCReg_out : out std_logic_vector(31 downto 0);
 
-	component ADDER_4 is
-		port (
-			PCAdder_in : in std_logic_vector(31 downto 0);
-			PCAdder_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+        PCReg_address_out : out std_logic_vector(7 downto 0)
+ 	);
+end component;
+signal PCReg_out_bus : std_logic_vector(31 downto 0);
+signal PCReg_address_out_bus : std_logic_vector(7 downto 0);
 
-	component MEM_INSTR is
-		port (
-			MI_address : in std_logic_vector(7 downto 0);
-			MI_Instr_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component ADDER_4 is
+	port (
+  		PCAdder_in : in std_logic_vector(31 downto 0);
+        PCAdder_out : out std_logic_vector(31 downto 0)
+ 	);
+end component;
+signal PCAdder_out_bus : std_logic_vector(31 downto 0);
 
-	component IF_ID is
-		port (
-			IF_ID_clk : in std_logic;
+component MEM_INSTR is
+    port (
+        MI_address : in std_logic_vector(7 downto 0);
+        MI_Instr_out : out std_logic_vector(31 downto 0)
+    );
+end component;
+signal MI_Instr_out_bus : std_logic_vector(31 downto 0);
 
-			IF_ID_PC_in : in std_logic_vector(31 downto 0);
-			IF_ID_PC_out : out std_logic_vector(31 downto 0);
+component IF_ID is
+	port (
+  		IF_ID_clk : in std_logic;
 
-			IF_ID_Instr_in : in std_logic_vector(31 downto 0);
-			IF_ID_Instr_out : out std_logic_vector(31 downto 0);
+  		IF_ID_PC_in : in std_logic_vector(31 downto 0);
+        IF_ID_PC_out : out std_logic_vector(31 downto 0);
 
-			IF_ID_rs1_out : out std_logic_vector(4 downto 0);
-			IF_ID_rs2_out : out std_logic_vector(4 downto 0);
-			IF_ID_rd_out : out std_logic_vector(4 downto 0);
+        IF_ID_Instr_in : in std_logic_vector(31 downto 0);
+        IF_ID_Instr_out : out std_logic_vector(31 downto 0);
 
-			IF_ID_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
-			IF_ID_PC_PLUS_4_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+        IF_ID_rs1_out : out std_logic_vector(4 downto 0);
+        IF_ID_rs2_out : out std_logic_vector(4 downto 0);
+        IF_ID_rd_out : out std_logic_vector(4 downto 0);
+
+        IF_ID_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
+        IF_ID_PC_PLUS_4_out : out std_logic_vector(31 downto 0)
+ 	);
+end component;
+signal IF_ID_PC_out_bus : std_logic_vector(31 downto 0);
+signal IF_ID_Instr_out_bus : std_logic_vector(31 downto 0);
+signal IF_ID_rs1_out_bus : std_logic_vector(4 downto 0);
+signal IF_ID_rs2_out_bus : std_logic_vector(4 downto 0);
+signal IF_ID_rd_out_bus : std_logic_vector(4 downto 0);
+signal IF_ID_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
 
 	-- ID
 
-	component CONTROL is
-		port (
-			CONTROL_instr : in std_logic_vector(31 downto 0);
+component CONTROL is
+	port (
+        CONTROL_instr : in std_logic_vector(31 downto 0);
 
-			--EX
-			CONTROL_ALUSrc : out std_logic;
-			CONTROL_ALUOp : out std_logic_vector(1 downto 0);
+        --EX
+        CONTROL_ALUSrc : out std_logic;
+        CONTROL_ALUOp : out std_logic_vector(1 downto 0);
 
-			--MEM
-			CONTROL_Branch : out std_logic;
-			CONTROL_Jal : out std_logic_vector(1 downto 0); -- indica se a instrução é do tipo Jal (== 01) or Jalr (== 10)
-			CONTROL_MemWrite : out std_logic; -- memWrite = 1; memRead = 0
+        --MEM
+        CONTROL_Branch : out std_logic;
+        CONTROL_Jal : out std_logic_vector(1 downto 0); -- indica se a instrução é do tipo Jal (== 01) or Jalr (== 10)
+        CONTROL_MemWrite : out std_logic; -- memWrite = 1; memRead = 0
 
-			--WB
-			CONTROL_RegWrite : out std_logic;
-			CONTROL_ResultSrc : out std_logic_vector(2 downto 0) -- Mem2Reg extendido
-		);
-	end component;
+        --WB
+        CONTROL_RegWrite : out std_logic;
+        CONTROL_ResultSrc : out std_logic_vector(2 downto 0) -- Mem2Reg extendido
+ 	);
+end component;
+signal CONTROL_ALUSrc_bus : std_logic;
+signal CONTROL_ALUOp_bus : std_logic_vector(1 downto 0);
+signal CONTROL_Branch_bus : std_logic;
+signal CONTROL_Jal_bus : std_logic_vector(1 downto 0);
+signal CONTROL_MemWrite_bus : std_logic;
+signal CONTROL_RegWrite_bus : std_logic;
+signal CONTROL_ResultSrc_bus : std_logic_vector(2 downto 0);
 
-	component XREGS is
-		port (
-			XRegs_clk, XRegs_wren, XRegs_rst : in std_logic;
-			XRegs_rs1, Xregs_rs2, XRegs_rd : in std_logic_vector(4 downto 0);
-			XRegs_data : in std_logic_vector(31 downto 0);
-			XRegs_ro1, XRegs_ro2 : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component XREGS is
+    port (
+        XRegs_clk, XRegs_wren, XRegs_rst : in std_logic;
+        XRegs_rs1, Xregs_rs2, XRegs_rd : in std_logic_vector(4 downto 0);
+        XRegs_data : in std_logic_vector(31 downto 0);
+        XRegs_ro1, XRegs_ro2 : out std_logic_vector(31 downto 0)
+	);
+end component;
+signal XRegs_ro1_bus, XRegs_ro2_bus : std_logic_vector(31 downto 0);
 
-	component GenImm is
-		port (
-			GEN_IMM_instr : in std_logic_vector(31 downto 0);
-			GEN_IMM_imm32 : out signed(31 downto 0)
-		);
-	end component;
+component GenImm is
+    port (
+        GEN_IMM_instr : in std_logic_vector(31 downto 0);
+        GEN_IMM_imm32 : out std_logic_vector(31 downto 0)
+    );
+end component;
+signal GEN_IMM_imm32 : std_logic_vector(31 downto 0);
 
-	component ID_EX is
-		port (
-			IF_EX_clk : in std_logic;
+component ID_EX is
+	port (
+  		IF_EX_clk : in std_logic;
 
-			ID_EX_PC_in : in std_logic_vector(31 downto 0);
-			ID_EX_PC_out : out std_logic_vector(31 downto 0);
-			
-			ID_EX_rs1_in : in std_logic_vector(4 downto 0);
-			ID_EX_rs1_out : out std_logic_vector(4 downto 0);
-			
-			ID_EX_rs2_in : in std_logic_vector(4 downto 0);
-			ID_EX_rs2_out : out std_logic_vector(4 downto 0);
-			
-			ID_EX_rd_in : in std_logic_vector(4 downto 0);
-			ID_EX_rd_out : out std_logic_vector(4 downto 0);
-			
-			ID_EX_imm_in : in std_logic_vector(31 downto 0);
-			ID_EX_imm_out : out std_logic_vector(31 downto 0);
-			
-			ID_EX_instr_in : in std_logic_vector(31 downto 0);
-			ID_EX_instr_out : out std_logic_vector(31 downto 0);
-			
-			ID_EX_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
-			ID_EX_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
+  		ID_EX_PC_in : in std_logic_vector(31 downto 0);
+        ID_EX_PC_out : out std_logic_vector(31 downto 0);
+        
+        ID_EX_rs1_in : in std_logic_vector(4 downto 0);
+        ID_EX_rs1_out : out std_logic_vector(4 downto 0);
+        
+        ID_EX_rs2_in : in std_logic_vector(4 downto 0);
+        ID_EX_rs2_out : out std_logic_vector(4 downto 0);
+        
+        ID_EX_rd_in : in std_logic_vector(4 downto 0);
+        ID_EX_rd_out : out std_logic_vector(4 downto 0);
+        
+        ID_EX_imm_in : in std_logic_vector(31 downto 0);
+        ID_EX_imm_out : out std_logic_vector(31 downto 0);
+        
+        ID_EX_instr_in : in std_logic_vector(31 downto 0);
+        ID_EX_instr_out : out std_logic_vector(31 downto 0);
+        
+        ID_EX_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
+        ID_EX_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
 
-			-- control
-			ID_EX_CONTROL_ALUSrc_in : in std_logic;
-			ID_EX_CONTROL_ALUOp_in : in std_logic_vector(1 downto 0);
-			ID_EX_CONTROL_Branch_in : in std_logic;
-			ID_EX_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
-			ID_EX_CONTROL_MemWrite_in : in std_logic;
-			ID_EX_CONTROL_RegWrite_in : in std_logic;
-			ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+        -- control
+        ID_EX_CONTROL_ALUSrc_in : in std_logic;
+        ID_EX_CONTROL_ALUOp_in : in std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_Branch_in : in std_logic;
+        ID_EX_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_MemWrite_in : in std_logic;
+        ID_EX_CONTROL_RegWrite_in : in std_logic;
+        ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
 
-			ID_EX_CONTROL_ALUSrc_out : out std_logic;
-			ID_EX_CONTROL_ALUOp_out : out std_logic_vector(1 downto 0);
-			ID_EX_CONTROL_Branch_out : out std_logic;
-			ID_EX_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
-			ID_EX_CONTROL_MemWrite_out : out std_logic;
-			ID_EX_CONTROL_RegWrite_out : out std_logic;
-			ID_EX_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
-		);
-	end component;
+        ID_EX_CONTROL_ALUSrc_out : out std_logic;
+        ID_EX_CONTROL_ALUOp_out : out std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_Branch_out : out std_logic;
+        ID_EX_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_MemWrite_out : out std_logic;
+        ID_EX_CONTROL_RegWrite_out : out std_logic;
+        ID_EX_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
+ 	);
+end component;
+signal ID_EX_PC_out_bus : std_logic_vector(31 downto 0);
+signal ID_EX_rs1_out_bus : std_logic_vector(4 downto 0);
+signal ID_EX_rs2_out_bus : std_logic_vector(4 downto 0);
+signal ID_EX_rd_out_bus : std_logic_vector(4 downto 0);
+signal ID_EX_imm_out_bus : std_logic_vector(31 downto 0);
+signal ID_EX_instr_out_bus : std_logic_vector(31 downto 0);
+signal ID_EX_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
+signal ID_EX_CONTROL_ALUSrc_out_bus : std_logic;
+signal ID_EX_CONTROL_ALUOp_out_bus : std_logic_vector(1 downto 0);
+signal ID_EX_CONTROL_Branch_out_bus : std_logic;
+signal ID_EX_CONTROL_Jal_out_bus : std_logic_vector(1 downto 0);
+signal ID_EX_CONTROL_MemWrite_out_bus : std_logic;
+signal ID_EX_CONTROL_RegWrite_out_bus : std_logic;
+signal ID_EX_CONTROL_ResultSrc_out_bus : std_logic_vector(1 downto 0);
 
 	-- EX
 
-	component ADDER_PC_IMM is
-		port (
-			PC_IMM_Adder_PC : in std_logic_vector(31 downto 0);
-			PC_IMM_Adder_Imm : in std_logic_vector(31 downto 0);
-			PC_IMM_Adder_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component ADDER_PC_IMM is
+	port (
+  		PC_IMM_Adder_PC : in std_logic_vector(31 downto 0);
+        PC_IMM_Adder_Imm : in std_logic_vector(31 downto 0);
+        PC_IMM_Adder_out : out std_logic_vector(31 downto 0)
+ 	);
+end component;
+signal PC_IMM_Adder_out_bus : std_logic_vector(31 downto 0);
 
-	component MUX_ALU is
-		port (
-			ALUMUX_ALUSrc : in std_logic;
-			ALUMUX_rs2 : in std_logic_vector(31 downto 0);
-			ALUMUX_imm : in std_logic_vector(31 downto 0);
-			ALUMUX_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component MUX_ALU is
+	port (
+  		ALUMUX_ALUSrc : in std_logic;
+  		ALUMUX_rs2 : in std_logic_vector(31 downto 0);
+        ALUMUX_imm : in std_logic_vector(31 downto 0);
+        ALUMUX_out : out std_logic_vector(31 downto 0)
+ 	);
+end component;
+signal ALUMUX_out_bus : std_logic_vector(31 downto 0);
 
-	component ALU is
-		port (
-			ALU_opcode : in std_logic_vector(3 downto 0);
-			ALU_A, ALU_B : in std_logic_vector(31 downto 0);
-			ALU_Z : out std_logic_vector(31 downto 0);
-			ALU_zero : out std_logic
-		);
-	end component ALU;
+component ALU is
+    port (
+        ALU_opcode : in std_logic_vector(3 downto 0);
+        ALU_A, ALU_B : in std_logic_vector(31 downto 0);
+        ALU_Z : out std_logic_vector(31 downto 0);
+        ALU_zero : out std_logic
+    );
+end component ALU;
+signal ALU_Z_bus : std_logic_vector(31 downto 0);
+signal ALU_zero_bus : std_logic;
 
-	component ALU_Control is
-		port (
-			ALU_Control_instr : in std_logic_vector(31 downto 0);
-			ALU_Control_alu_op : in std_logic_vector(1 downto 0);
-			ALU_Control_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component ALU_Control is
+	port (
+  		ALU_Control_instr : in std_logic_vector(31 downto 0);
+        ALU_Control_alu_op : in std_logic_vector(1 downto 0);
+        ALU_Control_out : out std_logic_vector(3 downto 0)
+ 	);
+end component;
+signal ALU_Control_out_bus : std_logic_vector(3 downto 0);
 
-	component EX_MEM is
-		port (
-			EX_MEM_clk : in std_logic;
+component EX_MEM is
+	port (
+  		EX_MEM_clk : in std_logic;
 
-			EX_MEM_PC_plus_Imm_in : in std_logic_vector(31 downto 0);
-			EX_MEM_Pc_plus_Imm_out : out std_logic_vector(31 downto 0);
+  		EX_MEM_PC_plus_Imm_in : in std_logic_vector(31 downto 0);
+        EX_MEM_Pc_plus_Imm_out : out std_logic_vector(31 downto 0);
 
-			EX_MEM_zero_in : in std_logic;
-			EX_MEM_zero_out : out std_logic;
+        EX_MEM_zero_in : in std_logic;
+        EX_MEM_zero_out : out std_logic;
 
-			EX_MEM_rs2_in : in std_logic_vector(4 downto 0);
-			EX_MEM_rs2_out : out std_logic_vector(4 downto 0);
+        EX_MEM_rs2_in : in std_logic_vector(4 downto 0);
+        EX_MEM_rs2_out : out std_logic_vector(4 downto 0);
 
-			EX_MEM_rd_in : in std_logic_vector(4 downto 0);
-			EX_MEM_rd_out : out std_logic_vector(4 downto 0);
+        EX_MEM_rd_in : in std_logic_vector(4 downto 0);
+        EX_MEM_rd_out : out std_logic_vector(4 downto 0);
 
-			EX_MEM_Alu_in : in std_logic_vector(31 downto 0);
-			EX_MEM_Alu_out : out std_logic_vector(31 downto 0);
+        EX_MEM_Alu_in : in std_logic_vector(31 downto 0);
+        EX_MEM_Alu_out : out std_logic_vector(31 downto 0);
 
-			EX_MEM_imm_in : in std_logic_vector(31 downto 0);
-			EX_MEM_imm_out : out std_logic_vector(31 downto 0);
+        EX_MEM_imm_in : in std_logic_vector(31 downto 0);
+        EX_MEM_imm_out : out std_logic_vector(31 downto 0);
 
-			EX_MEM_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
-			EX_MEM_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
+        EX_MEM_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
+        EX_MEM_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
 
-			EX_MEM_address_out : out std_logic_vector(7 downto 0);
+        EX_MEM_address_out : out std_logic_vector(7 downto 0);
 
-			-- control
-			EX_MEM_CONTROL_Branch_in : in std_logic;
-			EX_MEM_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
-			EX_MEM_CONTROL_MemWrite_in : in std_logic;
-			EX_MEM_CONTROL_RegWrite_in : in std_logic;
-			EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+        -- control
+        EX_MEM_CONTROL_Branch_in : in std_logic;
+        EX_MEM_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
+        EX_MEM_CONTROL_MemWrite_in : in std_logic;
+        EX_MEM_CONTROL_RegWrite_in : in std_logic;
+        EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
 
-			EX_MEM_CONTROL_Branch_out : out std_logic;
-			EX_MEM_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
-			EX_MEM_CONTROL_MemWrite_out : out std_logic;
-			EX_MEM_CONTROL_RegWrite_out : out std_logic;
-			EX_MEM_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
-		);
-	end component;
+        EX_MEM_CONTROL_Branch_out : out std_logic;
+        EX_MEM_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
+        EX_MEM_CONTROL_MemWrite_out : out std_logic;
+        EX_MEM_CONTROL_RegWrite_out : out std_logic;
+        EX_MEM_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
+ 	);
+end component;
+signal EX_MEM_Pc_plus_Imm_out_bus : std_logic_vector(31 downto 0);
+signal EX_MEM_zero_out_bus : std_logic;
+signal EX_MEM_rs2_out_bus : std_logic_vector(4 downto 0);
+signal EX_MEM_rd_out_bus : std_logic_vector(4 downto 0);
+signal EX_MEM_Alu_out_bus : std_logic_vector(31 downto 0);
+signal EX_MEM_imm_out_bus : std_logic_vector(31 downto 0);
+signal EX_MEM_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
+signal EX_MEM_address_out_bus : std_logic_vector(7 downto 0);
+signal EX_MEM_CONTROL_Branch_out_bus : std_logic;
+signal EX_MEM_CONTROL_Jal_out_bus : std_logic_vector(1 downto 0);
+signal EX_MEM_CONTROL_MemWrite_out_bus : std_logic;
+signal EX_MEM_CONTROL_RegWrite_out_bus : std_logic;
+signal EX_MEM_CONTROL_ResultSrc_out_bus : std_logic_vector(1 downto 0);
 
 	-- MEM
 
-	component PC_Control is
-		port (
-			PC_Control_Branch : in std_logic;
-			PC_Control_Zero : in std_logic;
-			PC_Control_Jal : in std_logic_vector(1 downto 0);
+component PC_Control is
+	port (
+  		PC_Control_Branch : in std_logic;
+        PC_Control_Zero : in std_logic;
+        PC_Control_Jal : in std_logic_vector(1 downto 0);
 
-			PC_Control_PCSRC : out std_logic_vector(1 downto 0)
-		);
-	end component;
+        PC_Control_PCSRC : out std_logic_vector(1 downto 0)
+ 	);
+end component;
+signal PC_Control_PCSRC_bus : std_logic_vector(1 downto 0);
 
-	component MEM_DADOS is
-		port (
-			MD_clk : in std_logic;
-			MD_we : in std_logic;
-			MD_address : in std_logic_vector(7 downto 0);
-			MD_datain : in std_logic_vector(31 downto 0);
-			MD_dataout : out std_logic_vector(31 downto 0)
-		);
-	end component;
+component MEM_DADOS is
+    port (
+        MD_clk : in std_logic;
+        MD_we : in std_logic;
+        MD_address : in std_logic_vector(7 downto 0);
+        MD_datain : in std_logic_vector(31 downto 0);
+        MD_dataout : out std_logic_vector(31 downto 0)
+    );
+end component;
+signal MD_dataout_bus : std_logic_vector(31 downto 0);
 
-	component MEM_WB is
-		port (
-			MEM_WB_clk : in std_logic;
+component MEM_WB is
+	port (
+  		MEM_WB_clk : in std_logic;
 
-			MEM_WB_mem_data_in : in std_logic_vector(31 downto 0);
-			MEM_WB_mem_data_out : out std_logic_vector(31 downto 0);
+  		MEM_WB_mem_data_in : in std_logic_vector(31 downto 0);
+        MEM_WB_mem_data_out : out std_logic_vector(31 downto 0);
 
-			MEM_WB_Alu_in : in std_logic_vector(31 downto 0);
-			MEM_WB_Alu_out : out std_logic_vector(31 downto 0);
+        MEM_WB_Alu_in : in std_logic_vector(31 downto 0);
+        MEM_WB_Alu_out : out std_logic_vector(31 downto 0);
 
-			MEM_WB_rd_in : in std_logic_vector(4 downto 0);
-			MEM_WB_rd_out : out std_logic_vector(4 downto 0);
+        MEM_WB_rd_in : in std_logic_vector(4 downto 0);
+        MEM_WB_rd_out : out std_logic_vector(4 downto 0);
 
-			MEM_WB_PC_plus_Imm_in : in std_logic_vector(31 downto 0);
-			MEM_WB_Pc_plus_Imm_out : out std_logic_vector(31 downto 0);
+        MEM_WB_PC_plus_Imm_in : in std_logic_vector(31 downto 0);
+        MEM_WB_Pc_plus_Imm_out : out std_logic_vector(31 downto 0);
 
-			MEM_WB_imm_in : in std_logic_vector(31 downto 0);
-			MEM_WB_imm_out : out std_logic_vector(31 downto 0);
+        MEM_WB_imm_in : in std_logic_vector(31 downto 0);
+        MEM_WB_imm_out : out std_logic_vector(31 downto 0);
 
-			MEM_WB_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
-			MEM_WB_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
+        MEM_WB_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
+        MEM_WB_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
 
-			-- control
-			MEM_WB_CONTROL_RegWrite_in : in std_logic;
-			MEM_WB_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+        -- control
+        MEM_WB_CONTROL_RegWrite_in : in std_logic;
+        MEM_WB_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
 
-			MEM_WB_CONTROL_RegWrite_out : out std_logic;
-			MEM_WB_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
-		);
-	end component;
+        MEM_WB_CONTROL_RegWrite_out : out std_logic;
+        MEM_WB_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
+ 	);
+end component;
+signal MEM_WB_mem_data_out_bus : std_logic_vector(31 downto 0);
+signal MEM_WB_Alu_out_bus : std_logic_vector(31 downto 0);
+signal MEM_WB_rd_out_bus : std_logic_vector(4 downto 0);
+signal MEM_WB_Pc_plus_Imm_out_bus : std_logic_vector(31 downto 0);
+signal MEM_WB_imm_out_bus : std_logic_vector(31 downto 0);
+signal MEM_WB_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
+signal MEM_WB_CONTROL_RegWrite_out_bus : std_logic;
+signal MEM_WB_CONTROL_ResultSrc_out_bus : std_logic_vector(1 downto 0);
 
 	-- WB
 
-	component MUX_XREG is
-		port (
-			XREGSMUX_ResultSrc : in std_logic_vector(2 downto 0);
+component MUX_XREG is
+	port (
+  		XREGSMUX_ResultSrc : in std_logic_vector(2 downto 0);
 
-			XREGSMUX_ALU_in : in std_logic_vector(31 downto 0);
-			XREGSMUX_mem_data_in : in std_logic_vector(31 downto 0);
-			XREGSMUX_pc_plus_4_in : in std_logic_vector(31 downto 0);
-			XREGSMUX_pc_plus_Imm_in : in std_logic_vector(31 downto 0);
-			XREGSMUX_Imm_in : in std_logic_vector(31 downto 0);
+  		XREGSMUX_ALU_in : in std_logic_vector(31 downto 0);
+        XREGSMUX_mem_data_in : in std_logic_vector(31 downto 0);
+		XREGSMUX_pc_plus_4_in : in std_logic_vector(31 downto 0);
+		XREGSMUX_pc_plus_Imm_in : in std_logic_vector(31 downto 0);
+		XREGSMUX_Imm_in : in std_logic_vector(31 downto 0);
 
-			XREGSMUX_out : out std_logic_vector(31 downto 0)
-		);
-	end component;
+        XREGSMUX_out : out std_logic_vector(31 downto 0)
+ 	);
+end component;
+signal XREGSMUX_out_bus : std_logic_vector(31 downto 0);
 
 begin
 
-	-- IF (out ports)
+	-- IF
 
 	--- PCMUX
-	PCReg_in <= PCMux_out;
-
-	--- PCREG
-	PCAdder_in <= PCReg_out;
-	MI_address <= PCReg_address_out;
-	IF_ID_PC_in <= PCReg_out;
-
-	--- PCAdder
-	PCMux_Adder_in <= PCAdder_out;
-	IF_ID_PC_PLUS_4_in <= PCAdder_out;
-
-	--- MI
-	IF_ID_Instr_in <= MI_Instr_out;
-
-	-- ID (out ports)
-
-	-- IF/ID
-	XRegs_rs1 <= IF_ID_rs1_out;
-	XRegs_rs2 <= IF_ID_rs2_out;
-	ID_EX_rd_in <= IF_ID_rd_out;
-	CONTROL_instr <= IF_ID_Instr_out;
-	GEN_IMM_instr <= IF_ID_Instr_out;
-	ID_EX_instr_in <= IF_ID_Instr_out;
-	ID_EX_PC_PLUS_4_in <= IF_ID_PC_PLUS_4_out;
-	ID_EX_PC_in <= IF_ID_PC_out;
-
-	-- Control 
-	ID_EX_CONTROL_ALUSrc_in <= CONTROL_ALUSrc;
-	ID_EX_CONTROL_ALUOp_in <= CONTROL_ALUOp;
-	ID_EX_CONTROL_Branch_in <= CONTROL_Branch;
-	ID_EX_CONTROL_Jal_in <= CONTROL_Jal;
-	ID_EX_CONTROL_MemWrite_in <= CONTROL_MemWrite;
-	ID_EX_CONTROL_RegWrite_in <= CONTROL_RegWrite;
-	ID_EX_CONTROL_ResultSrc_in <= CONTROL_ResultSrc;
-
-	-- XREGS
-	ID_EX_rs1_in <= XRegs_rs1;
-	ID_EX_rs2_in <= XRegs_rs2;
-
-	-- IMM Gen
-	ID_EX_imm_in <= GEN_IMM_imm32;
+	PCMUX port map (
+		PCMux_Src => PC_Control_PCSRC_bus,
+		PCMux_Adder_in => PCAdder_out_bus,
+		PCMux_PC_Imm_in => EX_MEM_Pc_plus_Imm_out_bus,
+		PCMux_Reg_Imm_in => EX_MEM_Alu_out_bus,
+		PCMux_out => PCMux_out_bus
+	);
 
 end structural;

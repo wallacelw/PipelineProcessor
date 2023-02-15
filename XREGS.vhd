@@ -3,15 +3,13 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity XREGS is
-    
+entity XREGS is  
     port (
         XRegs_clk, XRegs_wren, XRegs_rst : in std_logic;
         XRegs_rs1, Xregs_rs2, XRegs_rd : in std_logic_vector(4 downto 0);
         XRegs_data : in std_logic_vector(31 downto 0);
         XRegs_ro1, XRegs_ro2 : out std_logic_vector(31 downto 0)
 	);
-    
 end entity;
 
 architecture df of XREGS is
