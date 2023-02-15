@@ -157,7 +157,7 @@ component ID_EX_PIPE is
         ID_EX_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
         ID_EX_CONTROL_MemWrite_in : in std_logic;
         ID_EX_CONTROL_RegWrite_in : in std_logic;
-        ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(2 downto 0);
 
         ID_EX_CONTROL_ALUSrc_out : out std_logic;
         ID_EX_CONTROL_ALUOp_out : out std_logic_vector(1 downto 0);
@@ -165,7 +165,7 @@ component ID_EX_PIPE is
         ID_EX_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
         ID_EX_CONTROL_MemWrite_out : out std_logic;
         ID_EX_CONTROL_RegWrite_out : out std_logic;
-        ID_EX_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
+        ID_EX_CONTROL_ResultSrc_out : out std_logic_vector(2 downto 0)
  	);
 end component;
 signal ID_EX_PC_out_bus : std_logic_vector(31 downto 0);
@@ -181,7 +181,7 @@ signal ID_EX_CONTROL_Branch_out_bus : std_logic;
 signal ID_EX_CONTROL_Jal_out_bus : std_logic_vector(1 downto 0);
 signal ID_EX_CONTROL_MemWrite_out_bus : std_logic;
 signal ID_EX_CONTROL_RegWrite_out_bus : std_logic;
-signal ID_EX_CONTROL_ResultSrc_out_bus : std_logic_vector(1 downto 0);
+signal ID_EX_CONTROL_ResultSrc_out_bus : std_logic_vector(2 downto 0);
 
 	-- EX
 
@@ -256,13 +256,13 @@ component EX_MEM_PIPE is
         EX_MEM_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
         EX_MEM_CONTROL_MemWrite_in : in std_logic;
         EX_MEM_CONTROL_RegWrite_in : in std_logic;
-        EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+        EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(2 downto 0);
 
         EX_MEM_CONTROL_Branch_out : out std_logic;
         EX_MEM_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
         EX_MEM_CONTROL_MemWrite_out : out std_logic;
         EX_MEM_CONTROL_RegWrite_out : out std_logic;
-        EX_MEM_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
+        EX_MEM_CONTROL_ResultSrc_out : out std_logic_vector(2 downto 0)
  	);
 end component;
 signal EX_MEM_Pc_plus_Imm_out_bus : std_logic_vector(31 downto 0);
@@ -277,7 +277,7 @@ signal EX_MEM_CONTROL_Branch_out_bus : std_logic;
 signal EX_MEM_CONTROL_Jal_out_bus : std_logic_vector(1 downto 0);
 signal EX_MEM_CONTROL_MemWrite_out_bus : std_logic;
 signal EX_MEM_CONTROL_RegWrite_out_bus : std_logic;
-signal EX_MEM_CONTROL_ResultSrc_out_bus : std_logic_vector(1 downto 0);
+signal EX_MEM_CONTROL_ResultSrc_out_bus : std_logic_vector(2 downto 0);
 
 	-- MEM
 
@@ -327,10 +327,10 @@ component MEM_WB_PIPE is
 
         -- control
         MEM_WB_CONTROL_RegWrite_in : in std_logic;
-        MEM_WB_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+        MEM_WB_CONTROL_ResultSrc_in : in std_logic_vector(2 downto 0);
 
         MEM_WB_CONTROL_RegWrite_out : out std_logic;
-        MEM_WB_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
+        MEM_WB_CONTROL_ResultSrc_out : out std_logic_vector(2 downto 0)
  	);
 end component;
 signal MEM_WB_mem_data_out_bus : std_logic_vector(31 downto 0);
@@ -340,7 +340,7 @@ signal MEM_WB_Pc_plus_Imm_out_bus : std_logic_vector(31 downto 0);
 signal MEM_WB_imm_out_bus : std_logic_vector(31 downto 0);
 signal MEM_WB_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
 signal MEM_WB_CONTROL_RegWrite_out_bus : std_logic;
-signal MEM_WB_CONTROL_ResultSrc_out_bus : std_logic_vector(1 downto 0);
+signal MEM_WB_CONTROL_ResultSrc_out_bus : std_logic_vector(2 downto 0);
 
 	-- WB
 
