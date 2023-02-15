@@ -19,8 +19,8 @@ architecture df of ALU_Control is
 
 begin
 
-    funct3 <= resize(unsigned('0' & instr(14 downto 12)), 4);
-    funct7 <= resize(unsigned('0' & instr(31 downto 25)), 8);
+    funct3 <= ('0' & unsigned(ALU_Control_instr(14 downto 12)));
+    funct7 <= ('0' & unsigned(ALU_Control_instr(31 downto 25)));
 
     process(ALU_Control_alu_op, ALU_Control_instr) begin
         -- for LW, SW
