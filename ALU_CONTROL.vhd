@@ -10,7 +10,7 @@ entity ALU_Control is
         ALU_Control_alu_op : in std_logic_vector(1 downto 0);
         ALU_Control_out : out std_logic_vector(31 downto 0)
  	);
-end entity ALU_Control;
+end entity;
 
 architecture df of ALU_Control is
     

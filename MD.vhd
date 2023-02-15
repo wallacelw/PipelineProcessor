@@ -11,7 +11,7 @@ entity MEM_DADOS is
         MD_datain : in std_logic_vector(31 downto 0);
         MD_dataout : out std_logic_vector(31 downto 0)
     );
-end entity MEM_DADOS;
+end entity;
 
 architecture df of MEM_DADOS is
 

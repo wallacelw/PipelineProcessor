@@ -13,7 +13,7 @@ entity MUX_PC is
 		PCMux_Reg_Imm_in : in std_logic_vector(31 downto 0);
         PCMux_out : out std_logic_vector(31 downto 0)
  	);
-end entity MUX_PC;
+end entity;
 
 architecture df of MUX_PC is
     
@@ -37,7 +37,7 @@ entity MUX_ALU is
         ALUMUX_imm : in std_logic_vector(31 downto 0);
         ALUMUX_out : out std_logic_vector(31 downto 0)
  	);
-end entity MUX_ALU;
+end entity;
 
 architecture df of MUX_ALU is
     
@@ -66,7 +66,7 @@ entity MUX_XREG is
 
         XREGSMUX_out : out std_logic_vector(31 downto 0)
  	);
-end entity MUX_XREG;
+end entity;
 
 architecture df of MUX_XREG is
     

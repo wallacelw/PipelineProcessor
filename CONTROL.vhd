@@ -21,7 +21,7 @@ entity CONTROL is
 
         --WB
         CONTROL_RegWrite : out std_logic;
-        CONTROL_ResultSrc : out std_logic_vector(2 downto 0); -- Mem2Reg extendido
+        CONTROL_ResultSrc : out std_logic_vector(2 downto 0) -- Mem2Reg extendido
  	);
 end entity;
 

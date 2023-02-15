@@ -12,7 +12,7 @@ entity XREGS is
         XRegs_ro1, XRegs_ro2 : out std_logic_vector(31 downto 0)
 	);
     
-end XREGS;
+end entity;
 
 architecture df of XREGS is
 
