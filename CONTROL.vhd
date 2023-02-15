@@ -73,25 +73,9 @@ begin
 
     -- JAL (UJ) 
     else if (opcode = x"6F") then
-        CONTROL_ALUSrc <= "-"; -- (Don't Care)
-        CONTROL_ALUOp <= "--"; -- (Don't Care)
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
-        CONTROL_MemRead <= "0"; -- Don't Read Mem
-        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
-        CONTROL_Mem2Reg <= "0"; -- Register receives ALU output
 
     -- JALR (I)
     else if (opcode = x"67" and funct3 = x"0") then
-        CONTROL_ALUSrc <= "-"; -- Use IMM Value for ALU
-        CONTROL_ALUOp <= "--"; -- R type or I type
-        CONTROL_Branch <= "0"; -- Don't update PC due to Branch
-        CONTROL_Jal <= "0"; -- Don't update PC due to Jal(r)
-        CONTROL_MemRead <= "0"; -- Don't Read Mem
-        CONTROL_MemWrite <= "0"; -- Don't Write in Mem
-        CONTROL_RegWrite <= "1"; -- Write Back to Register
-        CONTROL_Mem2Reg <= "0"; -- Register receives ALU output
 
     ---- Saltos
     -- Type SB (BRANCH):  BEQ, BNE, BLT, BGE, BLTU, BGEU
