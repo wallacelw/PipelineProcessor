@@ -197,7 +197,7 @@ signal PC_IMM_Adder_out_bus : std_logic_vector(31 downto 0);
 component MUX_ALU is
 	port (
   		ALUMUX_ALUSrc : in std_logic;
-  		ALUMUX_rs2 : in std_logic_vector(31 downto 0);
+  		ALUMUX_ro2 : in std_logic_vector(31 downto 0);
         ALUMUX_imm : in std_logic_vector(31 downto 0);
         ALUMUX_out : out std_logic_vector(31 downto 0)
  	);
@@ -435,10 +435,10 @@ begin
 		ID_EX_clk => clock,
 		ID_EX_PC_in => IF_ID_PC_out_bus,
 		ID_EX_PC_out => ID_EX_PC_out_bus,
-		ID_EX_rs1_in => XRegs_ro1_bus,
-		ID_EX_rs1_out => ID_EX_rs1_out_bus,
-		ID_EX_rs2_in => XRegs_ro2_bus,
-		ID_EX_rs2_out => ID_EX_rs2_out_bus,
+		ID_EX_ro1_in => XRegs_ro1_bus,
+		ID_EX_ro1_out => ID_EX_ro1_out_bus,
+		ID_EX_ro2_in => XRegs_ro2_bus,
+		ID_EX_ro2_out => ID_EX_ro2_out_bus,
 		ID_EX_rd_in => IF_ID_rd_out_bus,
 		ID_EX_rd_out => ID_EX_rd_out_bus,
 		ID_EX_imm_in => GEN_IMM_imm32_bus,
@@ -473,14 +473,14 @@ begin
 
 	ALUMUX: MUX_ALU port map (
 		ALUMUX_ALUSrc => ID_EX_CONTROL_ALUSrc_out_bus,
-		ALUMUX_rs2 => ID_EX_rs2_out_bus,
+		ALUMUX_ro2 => ID_EX_ro2_out_bus,
 		ALUMUX_imm => ID_EX_imm_out_bus,
 		ALUMUX_out => ALUMUX_out_bus
 	);
 
 	ULA: ALU port map (
 		ALU_opcode => ALU_Control_out_bus,
-		ALU_A => ID_EX_rs1_out_bus,
+		ALU_A => ID_EX_ro1_out_bus,
 		ALU_B => ALUMUX_out_bus,
 		ALU_Z => ALU_Z_bus,
 		ALU_zero => ALU_zero_bus
@@ -498,8 +498,8 @@ begin
 		EX_MEM_Pc_plus_Imm_out => EX_MEM_Pc_plus_Imm_out_bus,
 		EX_MEM_zero_in => ALU_zero_bus,
 		EX_MEM_zero_out => EX_MEM_zero_out_bus,
-		EX_MEM_rs2_in => ID_EX_rs2_out_bus,
-		EX_MEM_rs2_out => EX_MEM_rs2_out_bus,
+		EX_MEM_ro2_in => ID_EX_ro2_out_bus,
+		EX_MEM_ro2_out => EX_MEM_ro2_out_bus,
 		EX_MEM_rd_in => ID_EX_rd_out_bus,
 		EX_MEM_rd_out => EX_MEM_rd_out_bus,
 		EX_MEM_Alu_in => ALU_Z_bus,
@@ -534,7 +534,7 @@ begin
 		MD_clk => clock,
 		MD_we => EX_MEM_CONTROL_MemWrite_out_bus,
 		MD_address => EX_MEM_address_out_bus,
-		MD_datain => EX_MEM_rs2_out_bus,
+		MD_datain => EX_MEM_ro2_out_bus,
 		MD_dataout => MD_dataout_bus
 	);
 

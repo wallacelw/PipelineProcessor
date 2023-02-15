@@ -97,8 +97,8 @@ architecture df of ID_EX_PIPE is
 
 begin
 
-    process(IF_EX_clk) begin
-        if (rising_edge(IF_EX_clk)) then
+    process(ID_EX_clk) begin
+        if (rising_edge(ID_EX_clk)) then
             ID_EX_PC_out <= ID_EX_PC_in;
 
             ID_EX_ro1_out <= ID_EX_ro1_in;

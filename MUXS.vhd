@@ -33,7 +33,7 @@ use IEEE.numeric_std.all;
 entity MUX_ALU is
 	port (
   		ALUMUX_ALUSrc : in std_logic;
-  		ALUMUX_rs2 : in std_logic_vector(31 downto 0);
+  		ALUMUX_ro2 : in std_logic_vector(31 downto 0);
         ALUMUX_imm : in std_logic_vector(31 downto 0);
         ALUMUX_out : out std_logic_vector(31 downto 0)
  	);
@@ -43,7 +43,7 @@ architecture df of MUX_ALU is
     
 begin
 
-    ALUMUX_out <= ALUMUX_rs2 
+    ALUMUX_out <= ALUMUX_ro2 
 	when ALUMUX_ALUSrc = '0' 
 	else ALUMUX_imm;
 
