@@ -11,7 +11,7 @@ entity IF_ID is
 
   		IF_ID_PC_in : in std_logic_vector(31 downto 0);
         IF_ID_PC_out : out std_logic_vector(31 downto 0);
-        
+
         IF_ID_Instr_in : in std_logic_vector(31 downto 0);
         IF_ID_Instr_out : out std_logic_vector(31 downto 0);
 
@@ -21,7 +21,6 @@ entity IF_ID is
 
         IF_ID_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
         IF_ID_PC_PLUS_4_out : out std_logic_vector(31 downto 0)
-
  	);
 end entity;
 
@@ -73,7 +72,24 @@ entity ID_EX is
         ID_EX_instr_out : out std_logic_vector(31 downto 0);
         
         ID_EX_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
-        ID_EX_PC_PLUS_4_out : out std_logic_vector(31 downto 0)
+        ID_EX_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
+
+        -- control
+        ID_EX_CONTROL_ALUSrc_in : in std_logic;
+        ID_EX_CONTROL_ALUOp_in : in std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_Branch_in : in std_logic;
+        ID_EX_CONTROL_Jal_in : in std_logic;
+        ID_EX_CONTROL_MemWrite_in : in std_logic;
+        ID_EX_CONTROL_RegWrite_in : in std_logic;
+        ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+
+        ID_EX_CONTROL_ALUSrc_out : out std_logic;
+        ID_EX_CONTROL_ALUOp_out : out std_logic_vector(1 downto 0);
+        ID_EX_CONTROL_Branch_out : out std_logic;
+        ID_EX_CONTROL_Jal_out : out std_logic;
+        ID_EX_CONTROL_MemWrite_out : out std_logic;
+        ID_EX_CONTROL_RegWrite_out : out std_logic;
+        ID_EX_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
  	);
 end entity;
 
@@ -96,6 +112,14 @@ begin
             ID_EX_instr_out <= ID_EX_instr_in;
 
             ID_EX_PC_PLUS_4_out <= ID_EX_PC_PLUS_4_in;
+
+            ID_EX_CONTROL_ALUSrc_out <= ID_EX_CONTROL_ALUSrc_in;
+            ID_EX_CONTROL_ALUOp_out <= ID_EX_CONTROL_ALUOp_in;
+            ID_EX_CONTROL_Branch_out <= ID_EX_CONTROL_Branch_in;
+            ID_EX_CONTROL_Jal_out <= ID_EX_CONTROL_Jal_in;
+            ID_EX_CONTROL_MemWrite_out <= ID_EX_CONTROL_MemWrite_in;
+            ID_EX_CONTROL_RegWrite_out <= ID_EX_CONTROL_RegWrite_in;
+            ID_EX_CONTROL_ResultSrc_out <= ID_EX_CONTROL_ResultSrc_in;
         end if;
     end process;
 
@@ -128,7 +152,20 @@ entity EX_MEM is
         EX_MEM_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
         EX_MEM_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
 
-        EX_MEM_address_out : out std_logic_vector(7 downto 0)
+        EX_MEM_address_out : out std_logic_vector(7 downto 0);
+
+        -- control
+        EX_MEM_CONTROL_Branch_in : in std_logic;
+        EX_MEM_CONTROL_Jal_in : in std_logic;
+        EX_MEM_CONTROL_MemWrite_in : in std_logic;
+        EX_MEM_CONTROL_RegWrite_in : in std_logic;
+        EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+
+        EX_MEM_CONTROL_Branch_out : out std_logic;
+        EX_MEM_CONTROL_Jal_out : out std_logic;
+        EX_MEM_CONTROL_MemWrite_out : out std_logic;
+        EX_MEM_CONTROL_RegWrite_out : out std_logic;
+        EX_MEM_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
  	);
 end entity;
 
@@ -152,6 +189,11 @@ begin
 
             EX_MEM_address_out <= EX_MEM_Alu_in(7 downto 0);
 
+            EX_MEM_CONTROL_Branch_out <= EX_MEM_CONTROL_Branch_in;
+            EX_MEM_CONTROL_Jal_out <= EX_MEM_CONTROL_Jal_in;
+            EX_MEM_CONTROL_MemWrite_out <= EX_MEM_CONTROL_MemWrite_in;
+            EX_MEM_CONTROL_RegWrite_out <= EX_MEM_CONTROL_RegWrite_in;
+            EX_MEM_CONTROL_ResultSrc_out <= EX_MEM_CONTROL_ResultSrc_in;
         end if;
     end process;
 
@@ -176,7 +218,14 @@ entity MEM_WB is
         MEM_WB_rd_out : out std_logic_vector(4 downto 0);
 
         MEM_WB_PC_PLUS_4_in : in std_logic_vector(31 downto 0);
-        MEM_WB_PC_PLUS_4_out : out std_logic_vector(31 downto 0)
+        MEM_WB_PC_PLUS_4_out : out std_logic_vector(31 downto 0);
+
+        -- control
+        MEM_WB_CONTROL_RegWrite_in : in std_logic;
+        MEM_WB_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
+
+        MEM_WB_CONTROL_RegWrite_out : out std_logic;
+        MEM_WB_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
  	);
 end entity;
 
@@ -191,8 +240,11 @@ begin
             MEM_WB_Alu_out <= MEM_WB_Alu_in;
 
             MEM_WB_rd_out <= MEM_WB_rd_in;
-            
+
             MEM_WB_PC_PLUS_4_out <= MEM_WB_PC_PLUS_4_in;
+
+            MEM_WB_CONTROL_RegWrite_out <= MEM_WB_CONTROL_RegWrite_in;
+            MEM_WB_CONTROL_ResultSrc_out <= MEM_WB_CONTROL_ResultSrc_in;
         end if;
     end process;
 
