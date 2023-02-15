@@ -44,7 +44,7 @@ architecture df of MUX_ALU is
 begin
 
     ALUMUX_out <= ALUMUX_rs2 
-	when selector = '0' 
+	when ALUMUX_ALUSrc = '0' 
 	else ALUMUX_imm;
 
 end df;

@@ -30,7 +30,7 @@ architecture structural of CPU is
 		port (
 			PCReg_clk : in std_logic;
 			PCReg_in : in std_logic_vector(31 downto 0);
-			PCReg_out : out std_logic_vector(31 downto 0);
+			PCReg_out : out std_logic_vector(31 downto 0)
 		);
 	end component;
 
@@ -133,7 +133,7 @@ architecture structural of CPU is
 			ID_EX_CONTROL_ALUSrc_in : in std_logic;
 			ID_EX_CONTROL_ALUOp_in : in std_logic_vector(1 downto 0);
 			ID_EX_CONTROL_Branch_in : in std_logic;
-			ID_EX_CONTROL_Jal_in : in std_logic(1 downto 0);
+			ID_EX_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
 			ID_EX_CONTROL_MemWrite_in : in std_logic;
 			ID_EX_CONTROL_RegWrite_in : in std_logic;
 			ID_EX_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
@@ -141,7 +141,7 @@ architecture structural of CPU is
 			ID_EX_CONTROL_ALUSrc_out : out std_logic;
 			ID_EX_CONTROL_ALUOp_out : out std_logic_vector(1 downto 0);
 			ID_EX_CONTROL_Branch_out : out std_logic;
-			ID_EX_CONTROL_Jal_out : out std_logic;
+			ID_EX_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
 			ID_EX_CONTROL_MemWrite_out : out std_logic;
 			ID_EX_CONTROL_RegWrite_out : out std_logic;
 			ID_EX_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
@@ -213,13 +213,13 @@ architecture structural of CPU is
 
 			-- control
 			EX_MEM_CONTROL_Branch_in : in std_logic;
-			EX_MEM_CONTROL_Jal_in : in std_logic(1 downto 0);
+			EX_MEM_CONTROL_Jal_in : in std_logic_vector(1 downto 0);
 			EX_MEM_CONTROL_MemWrite_in : in std_logic;
 			EX_MEM_CONTROL_RegWrite_in : in std_logic;
 			EX_MEM_CONTROL_ResultSrc_in : in std_logic_vector(1 downto 0);
 
 			EX_MEM_CONTROL_Branch_out : out std_logic;
-			EX_MEM_CONTROL_Jal_out : out std_logic;
+			EX_MEM_CONTROL_Jal_out : out std_logic_vector(1 downto 0);
 			EX_MEM_CONTROL_MemWrite_out : out std_logic;
 			EX_MEM_CONTROL_RegWrite_out : out std_logic;
 			EX_MEM_CONTROL_ResultSrc_out : out std_logic_vector(1 downto 0)
@@ -234,7 +234,7 @@ architecture structural of CPU is
 			PC_Control_Zero : in std_logic;
 			PC_Control_Jal : in std_logic_vector(1 downto 0);
 
-			PC_Control_PCSRC : out std_logic(1 downto 0);
+			PC_Control_PCSRC : out std_logic_vector(1 downto 0)
 		);
 	end component;
 
