@@ -56,11 +56,11 @@ entity ID_EX_PIPE is
   		ID_EX_PC_in : in std_logic_vector(31 downto 0);
         ID_EX_PC_out : out std_logic_vector(31 downto 0);
         
-        ID_EX_rs1_in : in std_logic_vector(4 downto 0);
-        ID_EX_rs1_out : out std_logic_vector(4 downto 0);
+        ID_EX_ro1_in : in std_logic_vector(31 downto 0);
+        ID_EX_ro1_out : out std_logic_vector(31 downto 0);
         
-        ID_EX_rs2_in : in std_logic_vector(4 downto 0);
-        ID_EX_rs2_out : out std_logic_vector(4 downto 0);
+        ID_EX_ro2_in : in std_logic_vector(31 downto 0);
+        ID_EX_ro2_out : out std_logic_vector(31 downto 0);
         
         ID_EX_rd_in : in std_logic_vector(4 downto 0);
         ID_EX_rd_out : out std_logic_vector(4 downto 0);
@@ -101,9 +101,9 @@ begin
         if (rising_edge(IF_EX_clk)) then
             ID_EX_PC_out <= ID_EX_PC_in;
 
-            ID_EX_rs1_out <= ID_EX_rs1_in;
+            ID_EX_ro1_out <= ID_EX_ro1_in;
 
-            ID_EX_rs2_out <= ID_EX_rs2_in;
+            ID_EX_ro2_out <= ID_EX_ro2_in;
 
             ID_EX_rd_out <= ID_EX_rd_in;
 
@@ -140,8 +140,8 @@ entity EX_MEM_PIPE is
         EX_MEM_zero_in : in std_logic;
         EX_MEM_zero_out : out std_logic;
 
-        EX_MEM_rs2_in : in std_logic_vector(4 downto 0);
-        EX_MEM_rs2_out : out std_logic_vector(4 downto 0);
+        EX_MEM_ro2_in : in std_logic_vector(31 downto 0);
+        EX_MEM_ro2_out : out std_logic_vector(31 downto 0);
 
         EX_MEM_rd_in : in std_logic_vector(4 downto 0);
         EX_MEM_rd_out : out std_logic_vector(4 downto 0);
@@ -182,7 +182,7 @@ begin
 
             EX_MEM_zero_out <= EX_MEM_zero_in;
 
-            EX_MEM_rs2_out <= EX_MEM_rs2_in;
+            EX_MEM_ro2_out <= EX_MEM_ro2_in;
 
             EX_MEM_rd_out <= EX_MEM_rd_in;
 

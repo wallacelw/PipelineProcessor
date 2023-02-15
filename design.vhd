@@ -1,14 +1,13 @@
 --- Processador Pipeline, modulo principal
 
--- NOT COMPLETE
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity CPU is
 	port (
-  		clock : in std_logic
+  		clock : in std_logic;
+		reset : in std_logic
  	);
 end entity;
 
@@ -133,11 +132,11 @@ component ID_EX_PIPE is
   		ID_EX_PC_in : in std_logic_vector(31 downto 0);
         ID_EX_PC_out : out std_logic_vector(31 downto 0);
         
-        ID_EX_rs1_in : in std_logic_vector(4 downto 0);
-        ID_EX_rs1_out : out std_logic_vector(4 downto 0);
+        ID_EX_ro1_in : in std_logic_vector(31 downto 0);
+        ID_EX_ro1_out : out std_logic_vector(31 downto 0);
         
-        ID_EX_rs2_in : in std_logic_vector(4 downto 0);
-        ID_EX_rs2_out : out std_logic_vector(4 downto 0);
+        ID_EX_ro2_in : in std_logic_vector(31 downto 0);
+        ID_EX_ro2_out : out std_logic_vector(31 downto 0);
         
         ID_EX_rd_in : in std_logic_vector(4 downto 0);
         ID_EX_rd_out : out std_logic_vector(4 downto 0);
@@ -170,8 +169,8 @@ component ID_EX_PIPE is
  	);
 end component;
 signal ID_EX_PC_out_bus : std_logic_vector(31 downto 0);
-signal ID_EX_rs1_out_bus : std_logic_vector(4 downto 0);
-signal ID_EX_rs2_out_bus : std_logic_vector(4 downto 0);
+signal ID_EX_ro1_out_bus : std_logic_vector(31 downto 0);
+signal ID_EX_ro2_out_bus : std_logic_vector(31 downto 0);
 signal ID_EX_rd_out_bus : std_logic_vector(4 downto 0);
 signal ID_EX_imm_out_bus : std_logic_vector(31 downto 0);
 signal ID_EX_instr_out_bus : std_logic_vector(31 downto 0);
@@ -235,8 +234,8 @@ component EX_MEM_PIPE is
         EX_MEM_zero_in : in std_logic;
         EX_MEM_zero_out : out std_logic;
 
-        EX_MEM_rs2_in : in std_logic_vector(4 downto 0);
-        EX_MEM_rs2_out : out std_logic_vector(4 downto 0);
+        EX_MEM_ro2_in : in std_logic_vector(31 downto 0);
+        EX_MEM_ro2_out : out std_logic_vector(31 downto 0);
 
         EX_MEM_rd_in : in std_logic_vector(4 downto 0);
         EX_MEM_rd_out : out std_logic_vector(4 downto 0);
@@ -268,7 +267,7 @@ component EX_MEM_PIPE is
 end component;
 signal EX_MEM_Pc_plus_Imm_out_bus : std_logic_vector(31 downto 0);
 signal EX_MEM_zero_out_bus : std_logic;
-signal EX_MEM_rs2_out_bus : std_logic_vector(4 downto 0);
+signal EX_MEM_ro2_out_bus : std_logic_vector(31 downto 0);
 signal EX_MEM_rd_out_bus : std_logic_vector(4 downto 0);
 signal EX_MEM_Alu_out_bus : std_logic_vector(31 downto 0);
 signal EX_MEM_imm_out_bus : std_logic_vector(31 downto 0);
@@ -385,7 +384,7 @@ begin
 	);
 
 	MI: MEM_INSTR port map (
-		MI_address => PCReg_out_bus,
+		MI_address => PCReg_address_out_bus,
 		MI_Instr_out => MI_Instr_out_bus
 	);
 
@@ -418,7 +417,7 @@ begin
 	BancoRegs: XREGS port map (
 		XRegs_clk => clock,
 		XRegs_wren => EX_MEM_CONTROL_RegWrite_out_bus,
-		-- XRegs_rst not used
+		XRegs_rst => reset,
 		XRegs_rs1 => IF_ID_rs1_out_bus,
 		Xregs_rs2 => IF_ID_rs2_out_bus,
 		XRegs_rd => IF_ID_rd_out_bus,
@@ -427,13 +426,148 @@ begin
 		XRegs_ro2 => XRegs_ro2_bus
 	);
 
-	GEN_IMM: GenImm port map (
+	GeradorIMM: GenImm port map (
 		GEN_IMM_instr => IF_ID_Instr_out_bus,
 		GEN_IMM_imm32 => GEN_IMM_imm32_bus
 	);
 	
-	ID_EX: ID_EX port map (
+	ID_EX: ID_EX_PIPE port map (
+		ID_EX_clk => clock,
+		ID_EX_PC_in => IF_ID_PC_out_bus,
+		ID_EX_PC_out => ID_EX_PC_out_bus,
+		ID_EX_rs1_in => XRegs_ro1_bus,
+		ID_EX_rs1_out => ID_EX_rs1_out_bus,
+		ID_EX_rs2_in => XRegs_ro2_bus,
+		ID_EX_rs2_out => ID_EX_rs2_out_bus,
+		ID_EX_rd_in => IF_ID_rd_out_bus,
+		ID_EX_rd_out => ID_EX_rd_out_bus,
+		ID_EX_imm_in => GEN_IMM_imm32_bus,
+		ID_EX_imm_out => ID_EX_imm_out_bus,
+		ID_EX_instr_in => IF_ID_Instr_out_bus,
+		ID_EX_instr_out => ID_EX_instr_out_bus,
+		ID_EX_PC_PLUS_4_in => IF_ID_PC_PLUS_4_out_bus,
+		ID_EX_PC_PLUS_4_out => ID_EX_PC_PLUS_4_out_bus,
+		ID_EX_CONTROL_ALUSrc_in => CONTROL_ALUSrc_bus,
+		ID_EX_CONTROL_ALUSrc_out => ID_EX_CONTROL_ALUSrc_out_bus,
+		ID_EX_CONTROL_ALUOp_in => CONTROL_ALUOp_bus,
+		ID_EX_CONTROL_ALUOp_out => ID_EX_CONTROL_ALUOp_out_bus,
+		ID_EX_CONTROL_Branch_in => CONTROL_Branch_bus,
+		ID_EX_CONTROL_Branch_out => ID_EX_CONTROL_Branch_out_bus,
+		ID_EX_CONTROL_Jal_in => CONTROL_Jal_bus,
+		ID_EX_CONTROL_Jal_out => ID_EX_CONTROL_Jal_out_bus,
+		ID_EX_CONTROL_MemWrite_in => CONTROL_MemWrite_bus,
+		ID_EX_CONTROL_MemWrite_out => ID_EX_CONTROL_MemWrite_out_bus,
+		ID_EX_CONTROL_RegWrite_in => CONTROL_RegWrite_bus,
+		ID_EX_CONTROL_RegWrite_out => ID_EX_CONTROL_RegWrite_out_bus,
+		ID_EX_CONTROL_ResultSrc_in => CONTROL_ResultSrc_bus,
+		ID_EX_CONTROL_ResultSrc_out => ID_EX_CONTROL_ResultSrc_out_bus
+	);
 
+	-- EX
+
+	PC_IMM_Adder: ADDER_PC_IMM port map (
+		PC_IMM_Adder_PC => ID_EX_PC_out_bus,
+		PC_IMM_Adder_Imm => ID_EX_imm_out_bus,
+		PC_IMM_Adder_out => PC_IMM_Adder_out_bus
+	);
+
+	ALUMUX: MUX_ALU port map (
+		ALUMUX_ALUSrc => ID_EX_CONTROL_ALUSrc_out_bus,
+		ALUMUX_rs2 => ID_EX_rs2_out_bus,
+		ALUMUX_imm => ID_EX_imm_out_bus,
+		ALUMUX_out => ALUMUX_out_bus
+	);
+
+	ULA: ALU port map (
+		ALU_opcode => ALU_Control_out_bus,
+		ALU_A => ID_EX_rs1_out_bus,
+		ALU_B => ALUMUX_out_bus,
+		ALU_Z => ALU_Z_bus,
+		ALU_zero => ALU_zero_bus
+	);
+
+	controleULA: ALU_Control port map (
+		ALU_Control_instr => ID_EX_instr_out_bus,
+		ALU_Control_alu_op => ID_EX_CONTROL_ALUOp_out_bus,
+		ALU_Control_out => ALU_Control_out_bus
+	);
+
+	EX_MEM: EX_MEM_PIPE port map (
+		EX_MEM_clk => clock,
+		EX_MEM_PC_plus_Imm_in => ID_EX_PC_PLUS_4_out_bus,
+		EX_MEM_Pc_plus_Imm_out => EX_MEM_Pc_plus_Imm_out_bus,
+		EX_MEM_zero_in => ALU_zero_bus,
+		EX_MEM_zero_out => EX_MEM_zero_out_bus,
+		EX_MEM_rs2_in => ID_EX_rs2_out_bus,
+		EX_MEM_rs2_out => EX_MEM_rs2_out_bus,
+		EX_MEM_rd_in => ID_EX_rd_out_bus,
+		EX_MEM_rd_out => EX_MEM_rd_out_bus,
+		EX_MEM_Alu_in => ALU_Z_bus,
+		EX_MEM_Alu_out => EX_MEM_Alu_out_bus,
+		EX_MEM_imm_in => ID_EX_imm_out_bus,
+		EX_MEM_imm_out => EX_MEM_imm_out_bus,
+		EX_MEM_PC_PLUS_4_in => ID_EX_PC_PLUS_4_out_bus,
+		EX_MEM_PC_PLUS_4_out => EX_MEM_PC_PLUS_4_out_bus,
+		EX_MEM_address_out => EX_MEM_address_out_bus,
+		EX_MEM_CONTROL_Branch_in => ID_EX_CONTROL_Branch_out_bus,
+		EX_MEM_CONTROL_Branch_out => EX_MEM_CONTROL_Branch_out_bus,
+		EX_MEM_CONTROL_Jal_in => ID_EX_CONTROL_Jal_out_bus,
+		EX_MEM_CONTROL_Jal_out => EX_MEM_CONTROL_Jal_out_bus,
+		EX_MEM_CONTROL_MemWrite_in => ID_EX_CONTROL_MemWrite_out_bus,
+		EX_MEM_CONTROL_MemWrite_out => EX_MEM_CONTROL_MemWrite_out_bus,
+		EX_MEM_CONTROL_RegWrite_in => ID_EX_CONTROL_RegWrite_out_bus,
+		EX_MEM_CONTROL_RegWrite_out => EX_MEM_CONTROL_RegWrite_out_bus,
+		EX_MEM_CONTROL_ResultSrc_in => ID_EX_CONTROL_ResultSrc_out_bus,
+		EX_MEM_CONTROL_ResultSrc_out => EX_MEM_CONTROL_ResultSrc_out_bus
+	);
+
+	-- MEM
+
+	Controle_PC: PC_Control port map (
+		PC_Control_Branch => EX_MEM_CONTROL_Branch_out_bus,
+		PC_Control_Zero => EX_MEM_zero_out_bus,
+		PC_Control_Jal => EX_MEM_CONTROL_Jal_out_bus,
+		PC_Control_PCSRC => PC_Control_PCSRC_bus
+	);
+
+	MD: MEM_DADOS port map (
+		MD_clk => clock,
+		MD_we => EX_MEM_CONTROL_MemWrite_out_bus,
+		MD_address => EX_MEM_address_out_bus,
+		MD_datain => EX_MEM_rs2_out_bus,
+		MD_dataout => MD_dataout_bus
+	);
+
+	MEM_WB: MEM_WB_PIPE port map (
+		MEM_WB_clk => clock,
+		MEM_WB_mem_data_in => MD_dataout_bus,
+		MEM_WB_mem_data_out => MEM_WB_mem_data_out_bus,
+		MEM_WB_Alu_in => EX_MEM_Alu_out_bus,
+		MEM_WB_Alu_out => MEM_WB_Alu_out_bus,
+		MEM_WB_rd_in => EX_MEM_rd_out_bus,
+		MEM_WB_rd_out => MEM_WB_rd_out_bus,
+		MEM_WB_PC_plus_Imm_in => EX_MEM_Pc_plus_Imm_out_bus,
+		MEM_WB_Pc_plus_Imm_out => MEM_WB_Pc_plus_Imm_out_bus,
+		MEM_WB_imm_in => EX_MEM_imm_out_bus,
+		MEM_WB_imm_out => MEM_WB_imm_out_bus,
+		MEM_WB_PC_PLUS_4_in => EX_MEM_PC_PLUS_4_out_bus,
+		MEM_WB_PC_PLUS_4_out => MEM_WB_PC_PLUS_4_out_bus,
+		MEM_WB_CONTROL_RegWrite_in => EX_MEM_CONTROL_RegWrite_out_bus,
+		MEM_WB_CONTROL_RegWrite_out => MEM_WB_CONTROL_RegWrite_out_bus,
+		MEM_WB_CONTROL_ResultSrc_in => EX_MEM_CONTROL_ResultSrc_out_bus,
+		MEM_WB_CONTROL_ResultSrc_out => MEM_WB_CONTROL_ResultSrc_out_bus
+	);
+
+	-- WB
+
+	XREGSMUX: MUX_XREG port map (
+		XREGSMUX_ResultSrc => MEM_WB_CONTROL_ResultSrc_out_bus,
+		XREGSMUX_ALU_in => MEM_WB_Alu_out_bus,
+		XREGSMUX_mem_data_in => MEM_WB_mem_data_out_bus,
+		XREGSMUX_pc_plus_4_in => MEM_WB_PC_PLUS_4_out_bus,
+		XREGSMUX_pc_plus_Imm_in => MEM_WB_Pc_plus_Imm_out_bus,
+		XREGSMUX_Imm_in => MEM_WB_imm_out_bus,
+		XREGSMUX_out => XREGSMUX_out_bus
 	);
 
 end structural;
