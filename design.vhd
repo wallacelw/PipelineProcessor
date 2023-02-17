@@ -496,7 +496,7 @@ begin
 
 	EX_MEM: EX_MEM_PIPE port map (
 		EX_MEM_clk => clock,
-		EX_MEM_PC_plus_Imm_in => ID_EX_PC_PLUS_4_out_bus,
+		EX_MEM_PC_plus_Imm_in => PC_IMM_Adder_out_bus,
 		EX_MEM_Pc_plus_Imm_out => EX_MEM_Pc_plus_Imm_out_bus,
 		EX_MEM_zero_in => ALU_zero_bus,
 		EX_MEM_zero_out => EX_MEM_zero_out_bus,
