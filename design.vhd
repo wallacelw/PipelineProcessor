@@ -417,11 +417,11 @@ begin
 
 	BancoRegs: XREGS port map (
 		XRegs_clk => clock,
-		XRegs_wren => EX_MEM_CONTROL_RegWrite_out_bus,
+		XRegs_wren => MEM_WB_CONTROL_RegWrite_out_bus,
 		XRegs_rst => reset,
 		XRegs_rs1 => IF_ID_rs1_out_bus,
 		Xregs_rs2 => IF_ID_rs2_out_bus,
-		XRegs_rd => IF_ID_rd_out_bus,
+		XRegs_rd => MEM_WB_rd_out_bus,
 		XRegs_data => XREGSMUX_out_bus,
 		XRegs_ro1 => XRegs_ro1_bus,
 		XRegs_ro2 => XRegs_ro2_bus
