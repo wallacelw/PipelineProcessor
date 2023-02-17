@@ -1,6 +1,6 @@
 Address     Code        Basic                        Line Source
 
-0x00000000  0x00a00313  addi x6,x0,10                7    addi t1 x0 10
+0x00000000  0x01000313  addi x6,x0,16                7    addi t1 x0 16
 0x00000004  0x00200393  addi x7,x0,2                 8    addi t2 x0 2
 0x00000008  0x00000013  addi x0,x0,0                 10   addi x0 x0 0 # nop
 0x0000000c  0x00000013  addi x0,x0,0                 11   addi x0 x0 0 # nop

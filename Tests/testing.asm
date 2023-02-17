@@ -4,7 +4,7 @@
 
 testeLW_SW:
 
-addi t1 x0 10
+addi t1 x0 16
 addi t2 x0 2
 
 addi x0 x0 0 # nop
