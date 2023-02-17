@@ -33,7 +33,7 @@ begin
                 ALU_Control_out <= "1100"; -- SEQ
 
             elsif (funct3 = x"1") then -- BNE
-                ALU_Control_out <= "1101"; -- SEQ
+                ALU_Control_out <= "1101"; -- SNE
             
             elsif (funct3 = x"4") then -- BLT
                 ALU_Control_out <= "1000"; -- SLT

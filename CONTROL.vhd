@@ -35,7 +35,7 @@ begin
     funct3 <= '0' & CONTROL_instr(14 downto 12);
     funct7 <= '0' & CONTROL_instr(31 downto 25);
 
-    process(CONTROL_instr) begin
+    process begin
 
     ---- Lógico-Aritméticas
     
@@ -134,7 +134,7 @@ begin
         CONTROL_RegWrite <= '0'; -- Write Back to Register
         CONTROL_ResultSrc <= "---"; -- (Don't Care)
 
-    ---- NOP (TODO)
+    ---- NOP (TODO, teoricamente instrução = x"0000 0000")
     --else
     
     end if;

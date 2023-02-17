@@ -404,7 +404,7 @@ begin
 
 	---------------------------- ID --------------------------
 
-	CONTROL: CONTROL_MODULE port map (
+	CONTROLE: CONTROL_MODULE port map (
 		CONTROL_instr => IF_ID_Instr_out_bus,
 		CONTROL_ALUSrc => CONTROL_ALUSrc_bus,
 		CONTROL_ALUOp => CONTROL_ALUOp_bus,
