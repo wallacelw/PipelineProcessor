@@ -2,13 +2,13 @@
 
 .text
 
-testeJalr:
+testeBEQ:
 
-addi t1 x0 1
+addi t1 x0 2
 addi t2 t2 2
 
 addi x0 x0 0 # nop
 addi x0 x0 0 # nop
 addi x0 x0 0 # nop
 
-jalr t0 t1 -1
+beq t1 t2 testeBEQ
