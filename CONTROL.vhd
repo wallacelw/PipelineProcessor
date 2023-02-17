@@ -35,7 +35,7 @@ begin
     funct3 <= '0' & CONTROL_instr(14 downto 12);
     funct7 <= '0' & CONTROL_instr(31 downto 25);
 
-    process begin
+    process (CONTROL_instr, opcode, funct3, funct7) begin
 
     ---- Lógico-Aritméticas
     
