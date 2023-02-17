@@ -13,7 +13,7 @@ end entity;
 
 architecture structural of CPU is
     
-	-- IF
+	---------------------------- IF --------------------------
 
 component MUX_PC is
 	port (
@@ -29,9 +29,9 @@ signal PCMux_out_bus : std_logic_vector(31 downto 0);
 component PC is
 	port (
   		PCReg_clk : in std_logic;
+		PCReg_rst : in std_logic;
   		PCReg_in : in std_logic_vector(31 downto 0);
         PCReg_out : out std_logic_vector(31 downto 0);
-
         PCReg_address_out : out std_logic_vector(7 downto 0)
  	);
 end component;
@@ -79,7 +79,7 @@ signal IF_ID_rs2_out_bus : std_logic_vector(4 downto 0);
 signal IF_ID_rd_out_bus : std_logic_vector(4 downto 0);
 signal IF_ID_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
 
-	-- ID
+	---------------------------- ID --------------------------
 
 component CONTROL_MODULE is
 	port (
@@ -183,7 +183,7 @@ signal ID_EX_CONTROL_MemWrite_out_bus : std_logic;
 signal ID_EX_CONTROL_RegWrite_out_bus : std_logic;
 signal ID_EX_CONTROL_ResultSrc_out_bus : std_logic_vector(2 downto 0);
 
-	-- EX
+	---------------------------- EX --------------------------
 
 component ADDER_PC_IMM is
 	port (
@@ -279,7 +279,7 @@ signal EX_MEM_CONTROL_MemWrite_out_bus : std_logic;
 signal EX_MEM_CONTROL_RegWrite_out_bus : std_logic;
 signal EX_MEM_CONTROL_ResultSrc_out_bus : std_logic_vector(2 downto 0);
 
-	-- MEM
+	---------------------------- MEM --------------------------
 
 component PC_Control is
 	port (
@@ -290,7 +290,7 @@ component PC_Control is
         PC_Control_PCSRC : out std_logic_vector(1 downto 0)
  	);
 end component;
-signal PC_Control_PCSRC_bus : std_logic_vector(1 downto 0);
+signal PC_Control_PCSRC_bus : std_logic_vector(1 downto 0) := "00";
 
 component MEM_DADOS is
     port (
@@ -342,7 +342,7 @@ signal MEM_WB_PC_PLUS_4_out_bus : std_logic_vector(31 downto 0);
 signal MEM_WB_CONTROL_RegWrite_out_bus : std_logic;
 signal MEM_WB_CONTROL_ResultSrc_out_bus : std_logic_vector(2 downto 0);
 
-	-- WB
+	---------------------------- WB --------------------------
 
 component MUX_XREG is
 	port (
@@ -361,7 +361,7 @@ signal XREGSMUX_out_bus : std_logic_vector(31 downto 0);
 
 begin
 
-	-- IF
+	---------------------------- IF --------------------------
 
 	PCMUX: MUX_PC port map (
 		PCMux_Src => PC_Control_PCSRC_bus,
@@ -373,6 +373,7 @@ begin
 
 	PCREG: PC port map (
 		PCReg_clk => clock,
+		PCReg_rst => reset,
 		PCReg_in => PCMux_out_bus,
 		PCReg_out => PCReg_out_bus,
 		PCReg_address_out => PCReg_address_out_bus
@@ -401,7 +402,7 @@ begin
 		IF_ID_PC_PLUS_4_out => IF_ID_PC_PLUS_4_out_bus
 	);
 
-	-- ID
+	---------------------------- ID --------------------------
 
 	CONTROL: CONTROL_MODULE port map (
 		CONTROL_instr => IF_ID_Instr_out_bus,
@@ -463,7 +464,7 @@ begin
 		ID_EX_CONTROL_ResultSrc_out => ID_EX_CONTROL_ResultSrc_out_bus
 	);
 
-	-- EX
+	---------------------------- EX --------------------------
 
 	PC_IMM_Adder: ADDER_PC_IMM port map (
 		PC_IMM_Adder_PC => ID_EX_PC_out_bus,
@@ -521,7 +522,7 @@ begin
 		EX_MEM_CONTROL_ResultSrc_out => EX_MEM_CONTROL_ResultSrc_out_bus
 	);
 
-	-- MEM
+	---------------------------- MEM --------------------------
 
 	Controle_PC: PC_Control port map (
 		PC_Control_Branch => EX_MEM_CONTROL_Branch_out_bus,
@@ -558,7 +559,7 @@ begin
 		MEM_WB_CONTROL_ResultSrc_out => MEM_WB_CONTROL_ResultSrc_out_bus
 	);
 
-	-- WB
+	---------------------------- WB --------------------------
 
 	XREGSMUX: MUX_XREG port map (
 		XREGSMUX_ResultSrc => MEM_WB_CONTROL_ResultSrc_out_bus,

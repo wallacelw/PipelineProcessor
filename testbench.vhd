@@ -1,7 +1,3 @@
--- Code your testbench here
-
--- Not Complete, not even started :-(
-
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -11,41 +7,44 @@ end entity;
 
 architecture arch of testbench is
 
-    component MEM_INSTR is
+    component CPU is
         port (
             clock : in std_logic;
-            address : in std_logic_vector(7 downto 0);
-            dataout : out std_logic_vector(31 downto 0)
+            reset : in std_logic
         );
     end component;
 
     signal clock_i : std_logic;
-    signal address_i : std_logic_vector(7 downto 0);
-    signal dataout_o : std_logic_vector(31 downto 0);
+    signal reset_i : std_logic;
 
 begin
 
-    dut: MEM_INSTR port map (
+    dut: CPU port map (
         clock => clock_i,
-        address => address_i,
-        dataout => dataout_o
+        reset => reset_i
     );
 
     drive: process begin
 
-        for i in 0 to 255 loop
+        reset_i <= '0';
+        clock_i <= '0';
+        wait for 10 ns;
+
+        reset_i <= '1';
+        clock_i <= '1';
+        wait for 10 ns;
+		
+        reset_i <= '0';
+        clock_i <= '0';
+        wait for 10 ns;
+        
+        for i in 0 to 30 loop
 
             clock_i <= '0';
-            address_i <= std_logic_vector(to_unsigned(i,8));
+            wait for 10 ns;
 
-            wait for 1 ns;
             clock_i <= '1';
-
-            wait for 1 ns;
-            assert(dataout_o = std_logic_vector(to_unsigned(i,30)) & "00") 
-
-            report "falha em ler dados previamente lidos do arquivo" 
-            severity warning;
+            wait for 10 ns;
             
         end loop;
 

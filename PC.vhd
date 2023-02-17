@@ -7,6 +7,7 @@ use IEEE.numeric_std.all;
 entity PC is
 	port (
   		PCReg_clk : in std_logic;
+        PCReg_rst : in std_logic;
   		PCReg_in : in std_logic_vector(31 downto 0);
         PCReg_out : out std_logic_vector(31 downto 0);
 
@@ -18,10 +19,14 @@ architecture df of PC is
 
 begin
 
-    process(PCReg_clk) begin
-        if (rising_edge(PCReg_clk)) then
+    process(PCReg_clk, PCReg_rst) begin
+        if (PCReg_rst = '1') then
+            PCReg_out <= x"00000000";
+
+        elsif (rising_edge(PCReg_clk)) then
             PCReg_out <= PCReg_in;
             PCReg_address_out <= PCReg_in(7 downto 0);
+            
         end if;
     end process;
 
