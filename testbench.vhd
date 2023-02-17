@@ -40,10 +40,10 @@ begin
         
         for i in 0 to 30 loop
 
-            clock_i <= '0';
+            clock_i <= '1';
             wait for 10 ns;
 
-            clock_i <= '1';
+            clock_i <= '0';
             wait for 10 ns;
             
         end loop;
