@@ -23,11 +23,11 @@ begin
 
     Write: process (MD_clk) begin
         if (rising_edge(MD_clk) and MD_we = '1') then
-            mem(to_integer(unsigned(MD_address))) <= MD_datain;
+            mem(to_integer(unsigned(MD_address))/4) <= MD_datain;
         end if;
         read_address <= MD_address; -- Adds 1 cycle
     end process;
     
-    MD_dataout <= mem(to_integer(unsigned(MD_address)));
+    MD_dataout <= mem(to_integer(unsigned(MD_address))/4);
 
 end df;
