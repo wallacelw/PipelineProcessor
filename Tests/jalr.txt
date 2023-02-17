@@ -1,0 +1,8 @@
+Address     Code        Basic                        Line Source
+
+0x00000000  0x00100313  addi x6,x0,1                 7    addi t1 x0 1
+0x00000004  0x00238393  addi x7,x7,2                 8    addi t2 t2 2
+0x00000008  0x00000013  addi x0,x0,0                 10   addi x0 x0 0 # nop
+0x0000000c  0x00000013  addi x0,x0,0                 11   addi x0 x0 0 # nop
+0x00000010  0x00000013  addi x0,x0,0                 12   addi x0 x0 0 # nop
+0x00000014  0xfff302e7  jalr x5,x6,0xffffffff        14   jalr t0 t1 -1
