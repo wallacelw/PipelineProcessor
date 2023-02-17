@@ -7,7 +7,7 @@ use IEEE.numeric_std.all;
 entity CPU is
 	port (
   		clock : in std_logic;
-		reset : in std_logic
+		reset : in std_logic       
  	);
 end entity;
 
@@ -359,6 +359,7 @@ component MUX_XREG is
 end component;
 signal XREGSMUX_out_bus : std_logic_vector(31 downto 0);
 
+
 begin
 
 	---------------------------- IF --------------------------
@@ -570,5 +571,151 @@ begin
 		XREGSMUX_Imm_in => MEM_WB_imm_out_bus,
 		XREGSMUX_out => XREGSMUX_out_bus
 	);
+    
+    -- process(reset, clock) begin
+
+    --     --Testa ANDI
+            
+    --     --Sinais de Controle
+	-- 	if(reset = '0' and IF_ID_Instr_out_bus(7 downto 0) = x"33") then 
+	-- 		assert CONTROL_ALUSrc_bus <= '0' and 
+	-- 			CONTROL_ALUOp_bus <= "10" and 
+	-- 			CONTROL_Branch_bus <= '0' and 
+	-- 			CONTROL_Jal_bus <= "00" and 
+	-- 			CONTROL_RegWrite_bus <= '1' and 
+	-- 			CONTROL_ResultSrc_bus <= "000"
+	-- 		report "ALUSrc incorreto"
+	-- 		severity error;
+
+    --     end if;
+
+    --     --Testa 1 Estagio
+    --     if(reset = '0' and (IF_ID_PC_PLUS_4_out_bus = x"0000001E")) then
+      
+	-- 		assert                        
+    --         	IF_ID_PC_out_bus <= x"0000001E" and
+    --         	MI_Instr_out_bus <= x"00000033" and 
+    --         	IF_ID_rs1_out_bus <= MI_Instr_out_bus(19 downto 15) and
+    --         	IF_ID_rs2_out_bus <= MI_Instr_out_bus(24 downto 20) and
+    --         	IF_ID_rd_out_bus <= MI_Instr_out_bus(11 downto 7) and
+    --         	IF_ID_PC_PLUS_4_out_bus <= PCAdder_out_bus
+                
+                
+                
+                
+
+
+    --     	report "Primeiro Estagio Incorreto"
+    --         severity error;
+
+    --     --Testa 2 Estagio   
+	-- 	elsif(reset = '0' and ID_EX_PC_PLUS_4_out_bus = x"0000001E") then
+        
+    --     	assert
+            
+	-- 		ID_EX_PC_out_bus <= IF_ID_PC_out_bus and
+        
+	-- 		ID_EX_ro1_out_bus <= XRegs_ro1_bus and 
+
+	-- 	 	ID_EX_ro2_out_bus <= XRegs_ro2_bus and
+	
+	-- 	 	ID_EX_rd_out_bus <= IF_ID_rd_out_bus and
+
+	-- 	 	ID_EX_imm_out_bus <= GEN_IMM_imm32_bus and
+
+	-- 	 	ID_EX_instr_out_bus <= IF_ID_Instr_out_bus and
+
+	-- 	 	ID_EX_PC_PLUS_4_out_bus <= IF_ID_PC_PLUS_4_out_bus and
+
+	-- 	 	ID_EX_CONTROL_ALUSrc_out_bus <= CONTROL_ALUSrc_bus and
+
+	-- 	 	ID_EX_CONTROL_ALUOp_out_bus <= CONTROL_ALUOp_bus and
+
+	-- 		ID_EX_CONTROL_Branch_out_bus <= CONTROL_Branch_bus and
+
+	-- 	 	ID_EX_CONTROL_Jal_out_bus <= CONTROL_Jal_bus and
+
+	-- 	 	ID_EX_CONTROL_MemWrite_out_bus <= CONTROL_MemWrite_bus and
+
+	-- 	 	ID_EX_CONTROL_RegWrite_out_bus <= CONTROL_RegWrite_bus and
+        
+	-- 	 	ID_EX_CONTROL_ResultSrc_out_bus <= CONTROL_ResultSrc_bus
+            	
+    --     	report "Segundo Estagio Incorreto"
+    --         severity error;
+
+	-- 	--Testa 3 Estagio   
+	-- 	elsif(reset = '0' and EX_MEM_PC_PLUS_4_out_bus = x"0000001E") then
+        
+    --     	assert
+            
+
+	-- 	           EX_MEM_Pc_plus_Imm_out_bus <= ID_EX_PC_PLUS_4_out_bus and
+
+	-- 	            EX_MEM_zero_out_bus <= ALU_zero_bus and
+
+	-- 	            EX_MEM_ro2_out_bus <= ID_EX_ro2_out_bus and
+
+	-- 	         	EX_MEM_rd_out_bus <= ID_EX_rd_out_bus and
+
+	-- 	            EX_MEM_Alu_out_bus <= ALU_Z_bus and
+
+	-- 	            EX_MEM_imm_out_bus <= ID_EX_imm_out_bus and
+	
+	-- 	            EX_MEM_PC_PLUS_4_out_bus <= ID_EX_PC_PLUS_4_out_bus and
+
+	-- 	            EX_MEM_address_out_bus <= EX_MEM_address_out_bus and
+
+	-- 	            EX_MEM_CONTROL_Branch_out_bus <= ID_EX_CONTROL_Branch_out_bus and
+
+	-- 	            EX_MEM_CONTROL_Jal_out_bus <= ID_EX_CONTROL_Jal_out_bus and
+
+	-- 	            EX_MEM_CONTROL_MemWrite_out_bus <= ID_EX_CONTROL_MemWrite_out_bus and
+
+	-- 	            EX_MEM_CONTROL_RegWrite_out_bus <= ID_EX_CONTROL_RegWrite_out_bus and
+
+	-- 	            EX_MEM_CONTROL_ResultSrc_out_bus <= ID_EX_CONTROL_ResultSrc_out_bus
+                       	
+    --         report "Terceiro Estagio Incorreto"
+    --         severity error;
+
+
+	-- 	--Testa 4 Estagio   
+	-- 	elsif(reset = '0' and ID_EX_PC_PLUS_4_out_bus = x"0000001E") then
+        
+    --     	assert
+            
+
+
+	-- 				MEM_WB_mem_data_out_bus <= MD_dataout_bus and
+
+	-- 				MEM_WB_Alu_out_bus <= EX_MEM_Alu_out_bus and
+
+	-- 				MEM_WB_rd_out_bus <= EX_MEM_rd_out_bus and
+
+	-- 				MEM_WB_Pc_plus_Imm_out_bus <= EX_MEM_Pc_plus_Imm_out_bus and
+
+	-- 				MEM_WB_imm_out_bus <= EX_MEM_imm_out_bus and
+
+	-- 				MEM_WB_PC_PLUS_4_out_bus <= EX_MEM_PC_PLUS_4_out_bus and
+
+	-- 				MEM_WB_CONTROL_RegWrite_out_bus <= EX_MEM_CONTROL_RegWrite_out_bus and
+
+	-- 				MEM_WB_CONTROL_ResultSrc_out_bus <= EX_MEM_CONTROL_ResultSrc_out_bus
+                       	
+    --         report "Quarto Estagio Incorreto"
+    --         severity error;
+        
+    --     --Testa 5/Resultado   
+	-- 	elsif(reset = '0' and MEM_WB_PC_PLUS_4_out_bus = x"0000001E") then
+        
+    --     	assert XREGSMUX_out_bus <= x"0000001B" --addi: fffffffe add: 0000001B sub: ffffffff
+                       	
+    --         report "Quinto Estagio Incorreto"
+    --         severity error;
+
+    --     end if;
+    
+    -- end process;
 
 end structural;

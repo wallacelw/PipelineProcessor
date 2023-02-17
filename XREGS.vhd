@@ -26,7 +26,7 @@ begin
     XRegs_ro2 <= (others => '0') when (Xregs_rs2 = "00000") 
     		else breg(to_integer(unsigned(Xregs_rs2)));
     
-    process(XRegs_clk) begin
+    process(XRegs_clk, XRegs_rst, XRegs_wren, breg,XRegs_data) begin
 
         if (rising_edge(XRegs_clk)) then
 

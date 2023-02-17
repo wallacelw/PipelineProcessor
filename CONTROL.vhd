@@ -45,7 +45,7 @@ begin
         CONTROL_ALUOp <= "10"; -- R type or I type
         CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "000"; -- Register receives ALU output
     
@@ -55,7 +55,7 @@ begin
         CONTROL_ALUOp <= "10"; -- R type or I type
         CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "000"; -- Register receives ALU output
 
@@ -65,7 +65,7 @@ begin
         CONTROL_ALUOp <= "--"; -- (Don't care)
         CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "011"; -- Register receives IMM + PC
     
@@ -74,7 +74,7 @@ begin
         CONTROL_ALUOp <= "--"; -- (Don't care)
         CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "100"; -- Register receives IMM
 
@@ -86,7 +86,7 @@ begin
         CONTROL_ALUOp <= "--"; -- (Don't Care)
         CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "01"; -- Update PC due to Jal
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "010"; -- Register RD receives PC+4
 
@@ -96,7 +96,7 @@ begin
         CONTROL_ALUOp <= "10"; -- R type or I type
         CONTROL_Branch <= '0'; -- Don't update PC due to Branch
         CONTROL_Jal <= "10"; -- Update PC due to Jalr
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '1'; -- Write Back to Register
         CONTROL_ResultSrc <= "010"; -- Register RD receives PC+4
 
@@ -107,7 +107,7 @@ begin
         CONTROL_ALUOp <= "01"; -- Branch Type
         CONTROL_Branch <= '1'; -- update PC due to Branch
         CONTROL_Jal <= "00"; -- Don't update PC due to Jal(r)
-        CONTROL_MemWrite <= '-'; -- (Don't care)
+        CONTROL_MemWrite <= '0'; -- Don't Write in Memory
         CONTROL_RegWrite <= '0'; -- Don't Write Back to Register
         CONTROL_ResultSrc <= "---"; -- (Don't Care)
 
@@ -134,8 +134,7 @@ begin
         CONTROL_RegWrite <= '0'; -- Write Back to Register
         CONTROL_ResultSrc <= "---"; -- (Don't Care)
 
-    ---- NOP (TODO, teoricamente instrução = x"0000 0000")
-    --else
+    ---- NOP (ADDI x0 x0 0 := x"0000 0013")
     
     end if;
 

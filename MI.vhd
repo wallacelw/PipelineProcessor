@@ -34,6 +34,6 @@ architecture df of MEM_INSTR is
     
 begin
 
-    MI_Instr_out <= mem(to_integer(unsigned(MI_address)));
+    MI_Instr_out <= mem(to_integer(unsigned(MI_address))/4);
 
 end df;

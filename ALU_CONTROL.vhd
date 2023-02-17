@@ -22,13 +22,16 @@ begin
     funct3 <= ('0' & (ALU_Control_instr(14 downto 12)));
     funct7 <= ('0' & (ALU_Control_instr(31 downto 25)));
 
-    process(ALU_Control_alu_op, ALU_Control_instr) begin
+    process(ALU_Control_alu_op, ALU_Control_instr, funct3, funct7) begin
+        
+        case ALU_Control_alu_op is
+
         -- for LW, SW
-        if (ALU_Control_alu_op = "00") then 
+        when "00" => 
             ALU_Control_out <= "0000"; -- ADD 
 
         -- for BRANCHES (SB)
-        elsif (ALU_Control_alu_op = "01") then 
+        when "01" =>
             if    (funct3 = x"0") then -- BEQ
                 ALU_Control_out <= "1100"; -- SEQ
 
@@ -50,9 +53,9 @@ begin
             end if;
 
         -- for R type and I type
-        elsif (ALU_Control_alu_op = "10") then 
+        when "10" => 
             if    (funct3 = x"0" and funct7 = x"00") then
-                ALU_Control_out <= "0000"; -- ADD
+               ALU_Control_out <= "0000"; -- ADD
 
             elsif (funct3 = x"0" and funct7 = x"20") then
                 ALU_Control_out <= "0001"; -- SUB
@@ -85,7 +88,9 @@ begin
                 ALU_Control_out <= "0000"; -- ADD
 
             end if;
+            
+         when others => ALU_Control_out <= "1111";
 
-        end if;
+        end case;
     end process;
 end df;
